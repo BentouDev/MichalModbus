@@ -1,7 +1,8 @@
 import sys
 from flask import Flask
 from flask import request
-from pymodbus.client.sync import ModbusTcpClient as ModbusClient
+from flask import session
+import modbus as sm
 	
 # Configure modbus client logging
 import logging
@@ -13,40 +14,36 @@ log.setLevel(logging.DEBUG)
 
 UNIT = 0x1
 
+server = None
+
 # Create flask server app
-app = Flask(__name__)	
+app = Flask(__name__)
+app.secret_key = b')xDEADBEEF'
 
-# Create modbus client var
-client = object()
-
-@app.route("/benis")
-def benis():
-    return "Not good!"
-    
 @app.route("/")
 def hello():
-    return "Hello World!"
-    
+	address = session['address']
+	if address:
+		return "Connected to modbus at " + address + "! Awaiting commands."
+	return "Not connected..."
+
 @app.route("/connect")
 def connect_to_server():
-	global client
-	if client is ModbusClient:
-		disconnect_from_server()
 	address = request.args.get('address')
 	if address:
-		client = ModbusClient(address, port=5020)
-		if client.connect():
+		session['address'] = address
+		try:
+			sm.get_modbus()
 			return "Connected"
-		return "Problem with connection! Check log on server"
-		
+		except Exception as error:
+			return 'Caught error: ' + str(error)
+
 	return "No address passed!"
-	
+		
 @app.route("/disconnect")
 def disconnect_from_server():
-	global client
-	if client is ModbusClient:
-		client.close()
-		client = object()
+	if session['address'] :			
+		session['address'] = None
 		return "Disconnected!"
 	return "Nothing to disconnect!"
 

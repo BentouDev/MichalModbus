@@ -2,6 +2,7 @@
 ```sh
 $ python3 -m pip install pymodbus
 $ python3 -m pip install flask flask-jsonpify flask-sqlalchemy flask-restful
+$ python3 -m pip install blynk-library-python
 ```
 
 ## Run
