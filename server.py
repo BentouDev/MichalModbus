@@ -27,6 +27,14 @@ def hello():
 		return "Connected to modbus at " + address + "! Awaiting commands."
 	return "Not connected..."
 
+@app.route("/view_data")
+def view_data():
+	modbus = sm.get_modbus()
+	rr = modbus.read_coils(0, 10, unit=1)
+	if rr.isError() :
+		return "Error occured"
+	return rr
+
 @app.route("/connect")
 def connect_to_server():
 	address = request.args.get('address')
