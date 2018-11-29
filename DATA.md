@@ -7,3 +7,6 @@ python3 server.py
 /connect?address=
 /view_data
 /disconnect
+
+# mbpoll
+mbpoll 192.168.1.244
