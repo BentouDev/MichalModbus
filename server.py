@@ -33,7 +33,13 @@ def hello():
 def view_data():
 	modbus = sm.get_modbus()
 	if modbus :
-		rr = modbus.write_coils(0, 1, unit=UNIT)
+		unit = request.args.get('unit')
+		rr = None
+		if unit :
+			rr = modbus.write_coils(0, 1, unit=unit)
+		else :
+			rr = modbus.write_coils(0, 1, unit=UNIT)
+
 		if rr.isError() :
 			return "Error occured"
 		return rr
