@@ -20,6 +20,8 @@ server = None
 app = Flask(__name__)
 app.secret_key = b')xDEADBEEF'
 
+UNIT = 0x1
+
 @app.route("/")
 def hello():
 	address = session['address']
@@ -30,7 +32,7 @@ def hello():
 @app.route("/view_data")
 def view_data():
 	modbus = sm.get_modbus()
-	rr = modbus.read_coils(0, 10, unit=1)
+	rr = modbus.read_coils(0, 10, unit=UNIT)
 	if rr.isError() :
 		return "Error occured"
 	return rr
