@@ -20,7 +20,7 @@ server = None
 app = Flask(__name__)
 app.secret_key = b')xDEADBEEF'
 
-UNIT = 0x1
+UNIT = 0x0
 
 @app.route("/")
 def hello():
@@ -32,10 +32,12 @@ def hello():
 @app.route("/view_data")
 def view_data():
 	modbus = sm.get_modbus()
-	rr = modbus.read_coils(0, 10, unit=UNIT)
-	if rr.isError() :
-		return "Error occured"
-	return rr
+	if modbus :
+		rr = modbus.read_coils(0, 1, unit=UNIT)
+		if rr.isError() :
+			return "Error occured"
+		return rr
+	return "Unable to connect"
 
 @app.route("/connect")
 def connect_to_server():
