@@ -2,6 +2,7 @@ import sys
 from flask import Flask
 from flask import request
 from flask import session
+from flask_bootstrap import Bootstrap
 import modbus as sm
 	
 # Configure modbus client logging
@@ -19,6 +20,8 @@ server = None
 # Create flask server app
 app = Flask(__name__)
 app.secret_key = b')xDEADBEEF'
+
+Bootstrap(app)
 
 UNIT = 0x0
 
