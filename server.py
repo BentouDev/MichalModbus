@@ -24,9 +24,8 @@ UNIT = 0x0
 
 @app.route("/")
 def hello():
-	address = session['address']
-	if address:
-		return "Connected to modbus at " + address + "! Awaiting commands."
+	if session['address']:
+		return "Connected to modbus at " + session['address'] + "! Awaiting commands."
 	return "Not connected..."
 
 @app.route("/view_data")
