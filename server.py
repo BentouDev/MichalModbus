@@ -2,6 +2,7 @@ import sys
 from flask import Flask
 from flask import request
 from flask import session
+from flask import render_template
 from flask_bootstrap import Bootstrap
 import modbus as sm
 	
