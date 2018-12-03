@@ -24,7 +24,7 @@ UNIT = 0x0
 
 @app.route("/")
 def hello():
-	if session['address']:
+	if 'address' in session:
 		return "Connected to modbus at " + session['address'] + "! Awaiting commands."
 	return "Not connected..."
 
@@ -59,7 +59,7 @@ def connect_to_server():
 		
 @app.route("/disconnect")
 def disconnect_from_server():
-	if session['address'] :			
+	if 'address' in session :			
 		session['address'] = None
 		return "Disconnected!"
 	return "Nothing to disconnect!"
