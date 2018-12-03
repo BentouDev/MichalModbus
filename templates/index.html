@@ -43,7 +43,16 @@
 {% endblock %}
 
 {% block content %}
-    <h3>{{ data.message }}</h1>
+    <h3></h1>
+        <div class="jumbotron">
+            <h1 class="display-4">Status</h1>
+            <p class="lead">{{ data.message }}</p>
+            <hr class="my-4">
+            <p>Check README for more info.</p>
+            <p class="lead">
+                <a class="btn btn-primary btn-lg" href="#" role="button">Try again</a>
+            </p>
+        </div>
     <div class="card" style="width: 18rem;">
         <img class="card-img-top" src="..." alt="Card image cap">
         <div class="card-body">
