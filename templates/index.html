@@ -23,8 +23,8 @@
             <ul class="dropdown-menu">
                 <li role="separator" class="divider"></li>
                 <li class="dropdown-header">Modbus</li>
-                <li><a href="#">address</a></li>
-                <li><a href="#">unit</a></li>
+                <li><a href="#">Change IP address</a></li>
+                <li><a href="#">Change unit ID</a></li>
                 <li><a href="#">Check connection...</a></li>
                 <li role="separator" class="divider"></li>
                 <li class="dropdown-header">Other</li>
@@ -44,4 +44,12 @@
 
 {% block content %}
     <h3>{{ data.message }}</h1>
+    <div class="card" style="width: 18rem;">
+        <img class="card-img-top" src="..." alt="Card image cap">
+        <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+        </div>
+    </div>
 {% endblock %}
