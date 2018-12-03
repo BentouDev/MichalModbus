@@ -28,9 +28,12 @@ UNIT = 0x0
 
 @app.route("/")
 def hello():
+	data = {'message':'Error, check log'}
 	if 'address' in session:
-		return "Connected to modbus at " + session['address'] + "! Awaiting commands."
-	return render_template('index.html')
+		data['message'] = "Connected to modbus at " + session['address'] + "! Awaiting commands."
+	else:
+		data['message'] = "Not connected..."
+	return render_template('index.html', title='Modbus', data = data)
 
 @app.route("/view_data")
 def view_data():
