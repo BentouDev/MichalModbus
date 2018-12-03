@@ -29,7 +29,7 @@ UNIT = 0x0
 def hello():
 	if 'address' in session:
 		return "Connected to modbus at " + session['address'] + "! Awaiting commands."
-	return "Not connected..."
+	return render_template('index.html')
 
 @app.route("/view_data")
 def view_data():
