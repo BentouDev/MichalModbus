@@ -30,6 +30,7 @@ UNIT = 0x0
 
 @app.route("/")
 def hello():
+	db_context = db.get_db()
 	data = {'message':'Error, check log'}
 	if 'address' in session:
             try:
@@ -40,6 +41,9 @@ def hello():
                     data['message'] = str(error)
 	else:
 		data['message'] = "Not connected..."
+	cur = db_context.cursor()
+	cur.execute ('SELECT * FROM widgets')
+	data.widgets = cur.fetchall()
 	return render_template('index.html', title='Modbus', data = data)
 
 @app.route("/view_data")

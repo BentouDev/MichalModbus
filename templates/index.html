@@ -55,7 +55,26 @@
         </div>
         <div class="container">
                 <div class="row">
+
+                    {% for widget in data.widgets %}
                     <div class="col-sm-6 col-md-4">
+                            <div class="thumbnail">
+                                <img src={{widget.img}} alt={{widget.name}}>
+                                <div class="caption">
+                                    <h3>{{widget.name}}</h3>
+                                    {% if widget.status %}
+                                    <p>Status: zasolniete</p>
+                                    <p><a href="#" class="btn btn-default" role="button">Odslon</a></p>
+                                    {% else %}
+                                    <p>Status: odsloniete</p>
+                                    <p><a href="#" class="btn btn-default" role="button">Zaslon</a></p>
+                                    {% endif %}                                    
+                                </div>
+                            </div>
+                    </div>
+                    {% endfor %}
+
+                    <!-- <div class="col-sm-6 col-md-4">
                         <div class="thumbnail">
                         <img src="https://www.domondo.pl/media/image/19/9a/b5/gotowa-aluzja-kremowa-widok_1_725x725.png" alt="...">
                         <div class="caption">
@@ -97,7 +116,7 @@
                             </div>
                             </div>
                     </div>                  
-                </div>
+                </div> -->
         </div>
 </div>
 {% endblock %}
