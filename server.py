@@ -73,6 +73,7 @@ def toggle_widget():
 	return url('/')
 
 @app.route("/edit_widget", methods=['GET', 'POST'])
+def edit_widget():
 	widget_id = request.args.get('widget_id', 0)
 	if not widget_id:
 		return url('/')
