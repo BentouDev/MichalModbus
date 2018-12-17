@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import sys
 from flask import Flask
 from flask import request
