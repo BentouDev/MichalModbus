@@ -66,11 +66,11 @@
                                 <input type="hidden" value="{{widget.id}}" name="widget_id" />
                                 <div class="btn-group btn-toggle">
                                 {% if widget.status %}
-                                    <button type="submit" name="Toggle" class="btn btn-sm btn-default">ON</button>
-                                    <button type="submit" name="Toggle" class="btn btn-sm btn-primary active">OFF</button>
-                                {% else %}
                                     <button type="submit" name="Toggle" class="btn btn-sm btn-default active">ON</button>
                                     <button type="submit" name="Toggle" class="btn btn-sm btn-primary">OFF</button>
+                                {% else %}
+                                    <button type="submit" name="Toggle" class="btn btn-sm btn-primary">ON</button>
+                                    <button type="submit" name="Toggle" class="btn btn-sm btn-default active">OFF</button>
                                 {% endif %}
                                 </div>
                             </form>
