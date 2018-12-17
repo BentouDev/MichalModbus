@@ -104,6 +104,7 @@ def add_widget():
 @app.route('/post_edit', methods=['GET', 'POST'])
 def post_edit():
 	if 'Submit' in request.form:
+		app.logger.warning("Submit: " + request.form['Submit'])
 		if request.form['Submit'] == 'Commit':
 			add_widget()
 		elif request.form['Submit'] == 'Update':
@@ -114,6 +115,8 @@ def post_edit():
 			widget_id = request.args.get('widget_id', 0)
 			if widget_id:
 				delete_widget(widget_id)
+	else:
+		app.logger.error("No Submit!")
 	return redirect(url_for('index'))
 
 def update_widget(id):
