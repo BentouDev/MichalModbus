@@ -62,15 +62,16 @@
                                 <img src={{widget.img}} alt={{widget.name}}>
                                 <div class="caption">
                                     <h3>{{widget.name}}</h3>
-                                    <label class="bs-switch">
+                                    <div class="btn-group btn-toggle"> 
                                     {% if widget.status %}
-                                    <input type="checkbox" checked>
+                                        <button class="btn btn-sm btn-default">ON</button>
+                                        <button class="btn btn-sm btn-primary active">OFF</button>
                                     {% else %}
-                                    <input type="checkbox" disabled>
+                                        <button class="btn btn-sm btn-default active">ON</button>
+                                        <button class="btn btn-sm btn-primary">OFF</button>
                                     {% endif %}
-                                        <span class="slider round"></span>
-                                    </label> 
-                                    </div>
+                                    </div> 
+                                </div>
                             </div>
                     </div>
                     {% endfor %}
