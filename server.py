@@ -87,18 +87,32 @@ def edit_widget():
 	db_context = db.get_db()
 	cur = db_context.cursor()
 	cur.execute ('SELECT * FROM widgets WHERE id == ?', widget_id)
-	data = cur.fetchall()[0]
+
+	data = {'title':'Edit'}
+	data['widget'] = cur.fetchall()[0]
 
 	db_context.close()
 
-	return render_template('edit.html', title="Edit widget", data=data)
+	return render_template('edit_widget.html', title="Edit widget", data=data)
 
 @app.route("/add_widget", methods=['GET', 'POST'])
 def add_widget():
 	if 'Commit' in request.form:
 		return redirect(url_for("index"))
 	else:
+		data = {'title':'Add'}
+		data['widget'] = {'name':'New widget', 'type':'1', 'img':''}
 		return render_template('add_widget.html', title="Add widget")
+
+@app.route('/post_edit', methods=['GET', 'POST'])
+def post_edit():
+	if 'Commit' in request.form:
+		print("attempt to commit")
+	else if 'Update' in request.form:
+		print ("attempt to update")
+	else if 'Delete' in request.form:
+		print("attempt to delete")
+	return redirect(url_for('index'))
 
 @app.route("/view_data")
 def view_data():

@@ -1,16 +1,17 @@
 {% extends "bootstrap/base.html" %}
 {% block content %}
 <div class="container">
-<form name="widget">
+<form name="widget" action='/post_edit'>
+    <input type="hidden" name="widget_id" value="{{widget.id}}">
     <h1>Name:</h1>
-    <input type="text" value="New widget" name="name">
+    <input type="text" value="{{widget.name}}" name="name">
     <h3>Type:</h3>
-    <select name="type">
-        <option value="Switch">1</option>
-        <option value="Float">2</option>
+    <select name="type" value="{{widget.type}}">
+        <option value="1">Switch</option>
+        <option value="2">Float</option>
     </select>
     <h1>Image:</h1>
-    <input type="text" value="" name="img">
+    <input type="text" value="{{widget.img}}" name="img">
 </form>
 </div>
 {% endblock %}
