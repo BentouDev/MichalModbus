@@ -32,7 +32,7 @@ UNIT = 0x0
 
 @app.route("/")
 @app.route("/index")
-def hello():
+def index():
 	db_context = db.get_db()
 	data = {'message':'Error, check log'}
 	if 'address' in session:
