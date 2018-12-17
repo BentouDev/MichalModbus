@@ -73,7 +73,6 @@ def toggle_widget():
 	print ("Changed status of '" + widgets[0]['name'] + "' to '" + str(status) + "'!")
 
 	db_context.commit()
-	db_context.close()
 
 	return redirect(url_for("index"))
 
@@ -91,8 +90,6 @@ def edit_widget():
 	data = {'title':'Edit'}
 	data['widget'] = cur.fetchall()[0]
 
-	db_context.close()
-
 	return render_template('edit_widget.html', title="Edit widget", data=data, widget=data['widget'])
 
 @app.route("/add_widget", methods=['GET', 'POST'])
@@ -107,12 +104,42 @@ def add_widget():
 @app.route('/post_edit', methods=['GET', 'POST'])
 def post_edit():
 	if 'Commit' in request.form:
-		print("attempt to commit")
+		add_widget()
 	elif 'Update' in request.form:
-		print ("attempt to update")
+		widget_id = request.args.get('widget_id', 0)
+		if widget_id:
+			update_widget(widget_id)
 	elif 'Delete' in request.form:
-		print("attempt to delete")
+		widget_id = request.args.get('widget_id', 0)
+		if widget_id:
+			delete_widget(widget_id)
 	return redirect(url_for('index'))
+
+def update_widget(id):
+	name = request.form.get("name")
+	type_id = request.form.get("type")
+	img = request.form.get("img")
+
+	db_context = db.get_db()
+	cur = db_context.cursor()
+	cur.execute ('UPDATE widgets SET name = ?, type = ?, img = ? WHERE id == ?', [name, type_id, img, widget_id])
+	db_context.commit()
+
+def add_widget():
+	name = request.form.get("name")
+	type_id = request.form.get("type")
+	img = request.form.get("img")
+
+	db_context = db.get_db()
+	cur = db_context.cursor()
+	cur.execute("INSERT (name, type, img) VALUES (?, ?, ?)", [name, type_id, img])
+	db_context.commit()
+
+def delete_widget(id):
+	db_context = db.get_db()
+	cur = db_context.cursor()
+	cur.execute ('DELETE FROM widgets WHERE id == ?', [id])
+	db_context.commit()
 
 @app.route("/view_data")
 def view_data():
