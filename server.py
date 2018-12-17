@@ -5,6 +5,7 @@ from flask import session
 from flask import render_template
 from flask_bootstrap import Bootstrap
 import modbus as sm
+import db as db
 	
 # Configure modbus client logging
 import logging
@@ -77,4 +78,5 @@ def disconnect_from_server():
 	return "Nothing to disconnect!"
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    db.init_app(app)
+	app.run(debug=True, host='0.0.0.0')
