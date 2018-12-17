@@ -103,15 +103,15 @@ def add_widget():
 
 @app.route('/post_edit', methods=['GET', 'POST'])
 def post_edit():
-	if 'Submit' in request.form:
-		app.logger.warning("Submit: " + request.form['Submit'])
-		if request.form['Submit'] == 'Commit':
+	if 'Submit' in request.args:
+		app.logger.warning("Submit: " + request.args['Submit'])
+		if request.args['Submit'] == 'Commit':
 			add_widget()
-		elif request.form['Submit'] == 'Update':
+		elif request.args['Submit'] == 'Update':
 			widget_id = request.args.get('widget_id', 0)
 			if widget_id:
 				update_widget(widget_id)
-		elif request.form['Submit'] == 'Delete':
+		elif request.args['Submit'] == 'Delete':
 			widget_id = request.args.get('widget_id', 0)
 			if widget_id:
 				delete_widget(widget_id)
@@ -120,9 +120,9 @@ def post_edit():
 	return redirect(url_for('index'))
 
 def update_widget(id):
-	name = request.form.get("name")
-	type_id = request.form.get("type")
-	img = request.form.get("img")
+	name = request.args.get("name")
+	type_id = request.args.get("type")
+	img = request.args.get("img")
 
 	db_context = db.get_db()
 	cur = db_context.cursor()
@@ -130,9 +130,9 @@ def update_widget(id):
 	db_context.commit()
 
 def add_widget():
-	name = request.form.get("name")
-	type_id = request.form.get("type")
-	img = request.form.get("img")
+	name = request.args.get("name")
+	type_id = request.args.get("type")
+	img = request.args.get("img")
 
 	db_context = db.get_db()
 	cur = db_context.cursor()
