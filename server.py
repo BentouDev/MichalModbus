@@ -65,7 +65,7 @@ def toggle_widget():
 	if not widgets[0]['status']:
 		status = 1
 
-	cur.execute ('UPDATE widgets SET status = ? WHERE id == ?', status, widget_id)
+	cur.execute ('UPDATE widgets SET status = ? WHERE id == ?', [status, widget_id])
 
 	db_context.commit()
 	db_context.close()
