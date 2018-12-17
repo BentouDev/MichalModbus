@@ -53,7 +53,7 @@ def index():
                 if modbus:
                     data['message'] = "Connected to modbus at " + session['address'] + "! Awaiting commands."
             except Exception as error:
-                    data['message'] = "Modbus ip: " + session['address'] + " error: " str(error)
+                    data['message'] = "Modbus ip: " + session['address'] + " error: " + str(error)
 	else:
 		data['message'] = "No address set, not connected..."
 	
