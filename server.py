@@ -31,6 +31,7 @@ Bootstrap(app)
 UNIT = 0x0
 
 @app.route("/")
+@app.route("/index")
 def hello():
 	db_context = db.get_db()
 	data = {'message':'Error, check log'}
@@ -56,7 +57,7 @@ def hello():
 def toggle_widget():
 	widget_id = request.args.get('widget_id', 0)
 	if not widget_id:
-		return redirect(url_for('/'))
+		return redirect(url_for("index"))
 
 	db_context = db.get_db()
 	cur = db_context.cursor()
@@ -72,13 +73,13 @@ def toggle_widget():
 	db_context.commit()
 	db_context.close()
 
-	return redirect(url_for('/'))
+	return redirect(url_for("index"))
 
 @app.route("/edit_widget", methods=['GET', 'POST'])
 def edit_widget():
 	widget_id = request.args.get('widget_id', 0)
 	if not widget_id:
-		return redirect(url_for('/'))
+		return redirect(url_for("index"))
 
 	db_context = db.get_db()
 	cur = db_context.cursor()
@@ -92,7 +93,7 @@ def edit_widget():
 @app.route("/add_widget", methods=['GET', 'POST'])
 def add_widget():
 	if 'Commit' in request.form:
-		return redirect(url_for('/'))
+		return redirect(url_for("index"))
 	else:
 		return render_template('add_widget.html', title="Add widget")
 
