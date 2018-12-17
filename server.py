@@ -93,7 +93,7 @@ def edit_widget():
 
 	db_context.close()
 
-	return render_template('edit_widget.html', title="Edit widget", data=data)
+	return render_template('edit_widget.html', title="Edit widget", data=data, widget=data['widget'])
 
 @app.route("/add_widget", methods=['GET', 'POST'])
 def add_widget():
@@ -102,7 +102,7 @@ def add_widget():
 	else:
 		data = {'title':'Add'}
 		data['widget'] = {'name':'New widget', 'type':'1', 'img':''}
-		return render_template('add_widget.html', title="Add widget")
+		return render_template('add_widget.html', title="Add widget", data=data, widget=data['widget'])
 
 @app.route('/post_edit', methods=['GET', 'POST'])
 def post_edit():
