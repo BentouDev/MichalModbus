@@ -42,7 +42,7 @@ def index():
 
 	address = ''
 	
-	if 'address' in db_app_data:
+	if db_app_data and 'address' in db_app_data:
 		address = db_app_data['address']
 	elif 'address' in session:
 		address = session['address']
