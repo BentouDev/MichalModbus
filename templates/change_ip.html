@@ -1,0 +1,8 @@
+{% extends "bootstrap/base.html" %}
+{% block content %}
+<form action="set_ip">
+    <p>Ip address:</p>
+    <input type="text" name='address' value="{{address}}">
+    <input type='submit' value='Submit'>
+</form>
+{% endblock %}

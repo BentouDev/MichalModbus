@@ -35,15 +35,27 @@ UNIT = 0x0
 def index():
 	db_context = db.get_db()
 	data = {'message':'Error, check log'}
-	if 'address' in session:
+
+	cur = db_context.cursor()
+	cur.execute("SELECT * FROM data")
+	db_app_data = cur.fetchone()
+
+	address = ''
+	
+	if 'address' in db_app_data:
+		address = db_app_data['address']
+	elif 'address' in session:
+		address = session['address']
+
+	if address:
             try:
                 modbus = sm.get_modbus()
                 if modbus:
                     data['message'] = "Connected to modbus at " + session['address'] + "! Awaiting commands."
             except Exception as error:
-                    data['message'] = str(error)
+                    data['message'] = "Modbus ip: " + session['address'] + " error: " str(error)
 	else:
-		data['message'] = "Not connected..."
+		data['message'] = "No address set, not connected..."
 	
 	cur = db_context.cursor()
 	cur.execute ('SELECT * FROM widgets')
@@ -52,6 +64,29 @@ def index():
 	db_context.close()
 
 	return render_template('index.html', title='Modbus', data = data)
+
+@app.route("/change_ip")
+def change_ip():
+
+	address = ''	
+	if 'address' in db_app_data:
+		address = db_app_data['address']
+	elif 'address' in session:
+		address = session['address']
+
+	return render_template('change_ip.html', address=address)
+
+@app.route("/set_ip", methods=['GET', 'POST'])
+def set_ip()
+	address = request.args.get('address')
+	if address:
+		db_context = db.get_db()
+		cur = db_context.cursor()
+		cur.execute ('UPDATE data SET address = ? ', [address])
+		db_context.commit()
+		session['address'] = address
+
+	return redirect(url_for('index'))
 
 @app.route("/toggle_widget", methods=['GET', 'POST'])
 def toggle_widget():
