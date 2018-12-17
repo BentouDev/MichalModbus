@@ -68,8 +68,15 @@ def index():
 @app.route("/change_ip")
 def change_ip():
 
-	address = ''	
-	if 'address' in db_app_data:
+	db_context = db.get_db()
+
+	cur = db_context.cursor()
+	cur.execute("SELECT * FROM data")
+	db_app_data = cur.fetchone()
+
+	address = ''
+	
+	if db_app_data and 'address' in db_app_data:
 		address = db_app_data['address']
 	elif 'address' in session:
 		address = session['address']
