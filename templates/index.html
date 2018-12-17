@@ -61,26 +61,33 @@
                         <div class="thumbnail">
                             <img src={{widget.img}} alt={{widget.name}}>
                             <div class="caption">
+                            <form action="/toggle_widget">
                                 <h3>{{widget.name}}</h3>
-                                <div class="btn-group btn-toggle"> 
+                                <input type="hidden" value="{{widget.id}}" name="widget_id" />
+                                <div class="btn-group btn-toggle">
                                 {% if widget.status %}
-                                    <button class="btn btn-sm btn-default">ON</button>
-                                    <button class="btn btn-sm btn-primary active">OFF</button>
+                                    <button type="submit" name="Toggle" class="btn btn-sm btn-default">ON</button>
+                                    <button type="submit" name="Toggle" class="btn btn-sm btn-primary active">OFF</button>
                                 {% else %}
-                                    <button class="btn btn-sm btn-default active">ON</button>
-                                    <button class="btn btn-sm btn-primary">OFF</button>
+                                    <button type="submit" name="Toggle" class="btn btn-sm btn-default active">ON</button>
+                                    <button type="submit" name="Toggle" class="btn btn-sm btn-primary">OFF</button>
                                 {% endif %}
-                                </div> 
+                                </div>
+                            </form>
                             </div>
                         </div>
                     </div>
                     {% endfor %}
+                        <h1>Well, there are no widgets here today. Just me...</h1>
+                    {% endfor %}
 
                     <div class="col-sm-6 col-md-4">
                         <div class="thumbnail">
+                            <form action="/add_widget">
                             <div class="caption">
-                                <button class="btn btn-primary active">Add widget</button>
+                                <button type="submit" value="Submit" class="btn btn-primary active">Add widget</button>
                             </div>
+                            </form>
                         </div>
                     </div>
 

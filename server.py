@@ -41,10 +41,24 @@ def hello():
                     data['message'] = str(error)
 	else:
 		data['message'] = "Not connected..."
+	
 	cur = db_context.cursor()
 	cur.execute ('SELECT * FROM widgets')
 	data['widgets'] = cur.fetchall()
+	
 	return render_template('index.html', title='Modbus', data = data)
+
+@app.route("/toggle_widget", methods=['GET', 'POST'])
+def toggle_widget():
+	widget_id = request.form['widget_id']
+	if widget_id:
+		return "toggled id " + widget_id + "!"
+	else:
+		return "no id passed!"
+
+@app.route("/add_widget", methods=['GET', 'POST'])
+def add_widget():
+	return "addition!"
 
 @app.route("/view_data")
 def view_data():
