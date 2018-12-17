@@ -1,6 +1,9 @@
 {% block title %}Edit widget{% endblock %}
 {% extends "widget_form.html" %}
+{% block content %}
 <div class = "container">
-    <button form="widget" class="btn btn-danger" type="submit" name="cancel">Cancel</button>
+    <button form="widget" class="btn btn-default" type="submit" name="cancel">Cancel</button>
+    <button form="widget" class="btn btn-danger" type="submit" name="delete">Delete</button>
     <button form="widget" class="btn btn-success" type="submit" name="submit" value="Commit">Save</button>
 </div>
+{% endblock %}
