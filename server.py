@@ -65,9 +65,11 @@ def toggle_widget():
 	cur.execute ('SELECT * FROM widgets')
 	widgets = cur.fetchall()
 
-	status = 0
-	if not widgets[0]['status']:
+	status = widgets[0]['status']
+	if status == 0:
 		status = 1
+	else:
+		status = 0
 
 	cur.execute ('UPDATE widgets SET status = ? WHERE id == ?', [status, widget_id])
 	print ("Changed status of '" + widgets[0]['name'] + "' to '" + str(status) + "'!")
