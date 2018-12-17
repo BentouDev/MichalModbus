@@ -56,8 +56,6 @@ def toggle_widget():
 	if not widget_id:
 		return url('/')
 
-	if 
-
 	db_context = db.get_db()
 	cur = db_context.cursor()
 	cur.execute ('SELECT * FROM widgets')
