@@ -77,7 +77,7 @@ def change_ip():
 	return render_template('change_ip.html', address=address)
 
 @app.route("/set_ip", methods=['GET', 'POST'])
-def set_ip()
+def set_ip():
 	address = request.args.get('address')
 	if address:
 		db_context = db.get_db()
