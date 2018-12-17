@@ -104,7 +104,7 @@ def set_ip():
 		db_context.commit()
 		session['address'] = address
 
-	return redirect(url_for('index'))
+	return redirect(url_for('test_connection'))
 
 @app.route("/toggle_widget", methods=['GET', 'POST'])
 def toggle_widget():
