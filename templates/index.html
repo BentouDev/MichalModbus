@@ -74,6 +74,10 @@
                                 {% endif %}
                                 </div>
                             </form>
+                            <form action="edit_widget">
+                                <input type="hidden" value="{{widget.id}}" name="widget_id" />
+                                <button type="submit" class="btn btn-sm btn-info">Edit</button>
+                            </form>
                             </div>
                         </div>
                     </div>

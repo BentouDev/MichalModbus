@@ -45,20 +45,55 @@ def hello():
 	cur = db_context.cursor()
 	cur.execute ('SELECT * FROM widgets')
 	data['widgets'] = cur.fetchall()
+
+	db_context.close()
 	
 	return render_template('index.html', title='Modbus', data = data)
 
 @app.route("/toggle_widget", methods=['GET', 'POST'])
 def toggle_widget():
 	widget_id = request.args.get('widget_id', 0)
-	if widget_id:
-		return "toggled id " + widget_id + "!"
-	else:
-		return "no id passed!"
+	if not widget_id:
+		return url('/')
+
+	if 
+
+	db_context = db.get_db()
+	cur = db_context.cursor()
+	cur.execute ('SELECT * FROM widgets')
+	widgets = cur.fetchall()
+
+	status = 0
+	if not widgets[0].status:
+		status = 1
+
+	cur.execute ('UPDATE widgets SET status = ? WHERE id == ?', status, widget_id)
+
+	db_context.commit()
+	db_context.close()
+
+	return url('/')
+
+@app.route("/edit_widget", methods=['GET', 'POST'])
+	widget_id = request.args.get('widget_id', 0)
+	if not widget_id:
+		return url('/')
+
+	db_context = db.get_db()
+	cur = db_context.cursor()
+	cur.execute ('SELECT * FROM widgets WHERE id == ?', widget_id)
+	data = cur.fetchall()[0]
+
+	db_context.close()
+
+	return render_template('edit.html', title="Edit widget", data=data)
 
 @app.route("/add_widget", methods=['GET', 'POST'])
 def add_widget():
-	return "addition!"
+	if 'Commit' in request.form:
+		return url('/')
+	else:
+		return render_template('add_widget.html', title="Add widget")
 
 @app.route("/view_data")
 def view_data():
