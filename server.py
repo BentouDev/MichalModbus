@@ -136,7 +136,7 @@ def add_widget():
 
 	db_context = db.get_db()
 	cur = db_context.cursor()
-	cur.execute("INSERT (name, type, img) VALUES (?, ?, ?)", [name, type_id, img])
+	cur.execute("INSERT INTO widgets (name, type, img) VALUES (?, ?, ?)", [name, type_id, img])
 	db_context.commit()
 
 def delete_widget(id):
