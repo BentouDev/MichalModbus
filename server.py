@@ -43,7 +43,7 @@ def hello():
 		data['message'] = "Not connected..."
 	cur = db_context.cursor()
 	cur.execute ('SELECT * FROM widgets')
-	data.widgets = cur.fetchall()
+	data['widgets'] = cur.fetchall()
 	return render_template('index.html', title='Modbus', data = data)
 
 @app.route("/view_data")
@@ -86,6 +86,4 @@ def start():
 	app.run(debug=True, host='0.0.0.0')
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.init_db()
     start()
