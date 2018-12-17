@@ -103,16 +103,17 @@ def add_widget():
 
 @app.route('/post_edit', methods=['GET', 'POST'])
 def post_edit():
-	if 'Commit' in request.form:
-		add_widget()
-	elif 'Update' in request.form:
-		widget_id = request.args.get('widget_id', 0)
-		if widget_id:
-			update_widget(widget_id)
-	elif 'Delete' in request.form:
-		widget_id = request.args.get('widget_id', 0)
-		if widget_id:
-			delete_widget(widget_id)
+	if 'Submit' in request.form:
+		if request.form['Submit'] == 'Commit':
+			add_widget()
+		elif request.form['Submit'] == 'Update':
+			widget_id = request.args.get('widget_id', 0)
+			if widget_id:
+				update_widget(widget_id)
+		elif request.form['Submit'] == 'Delete':
+			widget_id = request.args.get('widget_id', 0)
+			if widget_id:
+				delete_widget(widget_id)
 	return redirect(url_for('index'))
 
 def update_widget(id):
