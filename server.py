@@ -57,6 +57,7 @@ def index():
 def toggle_widget():
 	widget_id = request.args.get('widget_id', 0)
 	if not widget_id:
+		print("Error: toggle_widget: no widget_id in form!")
 		return redirect(url_for("index"))
 
 	db_context = db.get_db()
@@ -69,6 +70,7 @@ def toggle_widget():
 		status = 1
 
 	cur.execute ('UPDATE widgets SET status = ? WHERE id == ?', [status, widget_id])
+	print ("Changed status of '" + widgets[0]['name'] + "' to '" + status + "'!")
 
 	db_context.commit()
 	db_context.close()
@@ -79,6 +81,7 @@ def toggle_widget():
 def edit_widget():
 	widget_id = request.args.get('widget_id', 0)
 	if not widget_id:
+		print("Error: edit_widget: no widget_id in form!")
 		return redirect(url_for("index"))
 
 	db_context = db.get_db()
