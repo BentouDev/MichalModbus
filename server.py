@@ -62,7 +62,7 @@ def toggle_widget():
 	widgets = cur.fetchall()
 
 	status = 0
-	if not widgets[0].status:
+	if not widgets[0].['status']:
 		status = 1
 
 	cur.execute ('UPDATE widgets SET status = ? WHERE id == ?', status, widget_id)
