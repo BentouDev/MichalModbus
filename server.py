@@ -126,7 +126,7 @@ def update_widget(id):
 
 	db_context = db.get_db()
 	cur = db_context.cursor()
-	cur.execute ('UPDATE widgets SET name = ?, type = ?, img = ? WHERE id == ?', [name, type_id, img, widget_id])
+	cur.execute ('UPDATE widgets SET name = ?, type = ?, img = ? WHERE id == ?', [name, type_id, img, id])
 	db_context.commit()
 
 def add_widget():
