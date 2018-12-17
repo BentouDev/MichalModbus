@@ -50,7 +50,7 @@ def index():
 	data['widgets'] = cur.fetchall()
 
 	db_context.close()
-	
+
 	return render_template('index.html', title='Modbus', data = data)
 
 @app.route("/toggle_widget", methods=['GET', 'POST'])
@@ -62,19 +62,22 @@ def toggle_widget():
 
 	db_context = db.get_db()
 	cur = db_context.cursor()
-	cur.execute ('SELECT * FROM widgets')
-	widgets = cur.fetchall()
+	cur.execute ('SELECT * FROM widgets WHERE id == ?', widget_id)
+	widgets = cur.fetchone()
 
-	status = widgets[0]['status']
+	status = widgets['status']
+	print ("Status of '" + widgets['name'] + "'" + status + "'!")
+
 	if status == 0:
 		status = 1
 	else:
 		status = 0
 
 	cur.execute ('UPDATE widgets SET status = ? WHERE id == ?', [status, widget_id])
-	print ("Changed status of '" + widgets[0]['name'] + "' to '" + str(status) + "'!")
+	print ("Changed status of '" + widgets['name'] + "' to '" + str(status) + "'!")
 
 	db_context.commit()
+	db_context.close()
 
 	return redirect(url_for("index"))
 
@@ -90,7 +93,7 @@ def edit_widget():
 	cur.execute ('SELECT * FROM widgets WHERE id == ?', widget_id)
 
 	data = {'title':'Edit'}
-	data['widget'] = cur.fetchall()[0]
+	data['widget'] = cur.fetchone()
 
 	return render_template('edit_widget.html', title="Edit widget", data=data, widget=data['widget'])
 
