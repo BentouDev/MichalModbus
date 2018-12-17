@@ -108,9 +108,9 @@ def add_widget():
 def post_edit():
 	if 'Commit' in request.form:
 		print("attempt to commit")
-	else if 'Update' in request.form:
+	elif 'Update' in request.form:
 		print ("attempt to update")
-	else if 'Delete' in request.form:
+	elif 'Delete' in request.form:
 		print("attempt to delete")
 	return redirect(url_for('index'))
 
