@@ -34,7 +34,7 @@ UNIT = 0x0
 @app.route("/index")
 def index():
 	db_context = db.get_db()
-	data = {'message':'Error, check log'}
+	data = {'message':'Unknown error, check log'}
 
 	if 'message' in session:
 		data['message'] = session['message']
@@ -49,6 +49,7 @@ def index():
 
 @app.route("/test_connection")
 def test_connection():
+	data = {'message':'Unknown error, check log'}
 	db_context = db.get_db()
 	cur = db_context.cursor()
 	cur.execute("SELECT * FROM data")
