@@ -70,7 +70,7 @@ def toggle_widget():
 		status = 1
 
 	cur.execute ('UPDATE widgets SET status = ? WHERE id == ?', [status, widget_id])
-	print ("Changed status of '" + widgets[0]['name'] + "' to '" + status + "'!")
+	print ("Changed status of '" + widgets[0]['name'] + "' to '" + str(status) + "'!")
 
 	db_context.commit()
 	db_context.close()
