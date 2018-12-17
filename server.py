@@ -54,7 +54,7 @@ def hello():
 def toggle_widget():
 	widget_id = request.args.get('widget_id', 0)
 	if not widget_id:
-		return url('/')
+		return redirect(url_for('/'))
 
 	db_context = db.get_db()
 	cur = db_context.cursor()
@@ -70,13 +70,13 @@ def toggle_widget():
 	db_context.commit()
 	db_context.close()
 
-	return url('/')
+	return redirect(url_for('/'))
 
 @app.route("/edit_widget", methods=['GET', 'POST'])
 def edit_widget():
 	widget_id = request.args.get('widget_id', 0)
 	if not widget_id:
-		return url('/')
+		return redirect(url_for('/'))
 
 	db_context = db.get_db()
 	cur = db_context.cursor()
@@ -90,7 +90,7 @@ def edit_widget():
 @app.route("/add_widget", methods=['GET', 'POST'])
 def add_widget():
 	if 'Commit' in request.form:
-		return url('/')
+		return redirect(url_for('/'))
 	else:
 		return render_template('add_widget.html', title="Add widget")
 
