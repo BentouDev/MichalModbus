@@ -62,11 +62,11 @@ def toggle_widget():
 
 	db_context = db.get_db()
 	cur = db_context.cursor()
-	cur.execute ('SELECT * FROM widgets WHERE id == ?', widget_id)
+	cur.execute ('SELECT * FROM widgets WHERE id == ?', [widget_id])
 	widgets = cur.fetchone()
 
 	status = widgets['status']
-	print ("Status of '" + widgets['name'] + "'" + status + "'!")
+	print ("Status of '" + widgets['name'] + "'" + str(status) + "'!")
 
 	if status == 0:
 		status = 1
@@ -90,7 +90,7 @@ def edit_widget():
 
 	db_context = db.get_db()
 	cur = db_context.cursor()
-	cur.execute ('SELECT * FROM widgets WHERE id == ?', widget_id)
+	cur.execute ('SELECT * FROM widgets WHERE id == ?', [widget_id])
 
 	data = {'title':'Edit'}
 	data['widget'] = cur.fetchone()
