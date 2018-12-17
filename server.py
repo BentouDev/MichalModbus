@@ -77,6 +77,9 @@ def disconnect_from_server():
 		return "Disconnected!"
 	return "Nothing to disconnect!"
 
-if __name__ == '__main__':
-    db.init_app(app)
+def start():
+	db.init_app(app)
 	app.run(debug=True, host='0.0.0.0')
+
+if __name__ == '__main__':
+    start()
