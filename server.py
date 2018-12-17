@@ -30,7 +30,12 @@ UNIT = 0x0
 def hello():
 	data = {'message':'Error, check log'}
 	if 'address' in session:
-		data['message'] = "Connected to modbus at " + session['address'] + "! Awaiting commands."
+            try:
+                modbus = sm.get_modbus()
+                if modbus:
+                    data['message'] = "Connected to modbus at " + session['address'] + "! Awaiting commands."
+            except Exception as error:
+                    data['message'] = str(error)
 	else:
 		data['message'] = "Not connected..."
 	return render_template('index.html', title='Modbus', data = data)
@@ -42,9 +47,9 @@ def view_data():
 		unit = request.args.get('unit')
 		rr = None
 		if unit :
-			rr = modbus.write_coils(0, 1, unit=unit)
+			rr = modbus.write_registers(0, 1, unit=unit)
 		else :
-			rr = modbus.write_coils(0, 1, unit=UNIT)
+			rr = modbus.write_registers(0, 1, unit=UNIT)
 
 		if rr.isError() :
 			return "Error occured"
