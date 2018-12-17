@@ -59,7 +59,11 @@
                     {% for widget in data.widgets %}
                     <div class="col-sm-6 col-md-4">
                         <div class="thumbnail">
+                            {% if widget.img %}
                             <img src={{widget.img}} alt={{widget.name}}>
+                            {% else %}
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHHcYRG05BOuIvUisgGh8TNm0hH4_71YU7DRvGPR1v3cvVLBkl" alt={{widget.name}}>
+                            {% endif %}
                             <div class="caption">
                             <form action="/toggle_widget">
                                 <h3>{{widget.name}}</h3>
