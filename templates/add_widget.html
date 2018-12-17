@@ -1,6 +1,7 @@
 {% extends "widget_form.html" %}
 {% block title %}Add widget{% endblock %}
 {% block content %}
+{{ super() }}
 <div class = "container">
     <button form="widget" class="btn btn-danger" type="submit" name="cancel">Cancel</button>
     <button form="widget" class="btn btn-success" type="submit" name="submit" value="Commit">Add</button>
