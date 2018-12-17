@@ -50,7 +50,7 @@ def hello():
 
 @app.route("/toggle_widget", methods=['GET', 'POST'])
 def toggle_widget():
-	widget_id = request.form.get('widget_id', 0)
+	widget_id = request.args.get('widget_id', 0)
 	if widget_id:
 		return "toggled id " + widget_id + "!"
 	else:
