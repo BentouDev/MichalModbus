@@ -1,0 +1,16 @@
+{% extends "bootstrap/base.html" %}
+{% block content %}
+<div class="container">
+<form name="widget">
+    <h1>Name:</h1>
+    <input type="text" value="New widget" name="name">
+    <h3>Type:</h3>
+    <select name="type">
+        <option value="Switch">1</option>
+        <option value="Float">2</option>
+    </select>
+    <h1>Image:</h1>
+    <input type="text" value="" name="img">
+</form>
+</div>
+{% endblock %}
