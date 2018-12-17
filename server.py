@@ -215,7 +215,7 @@ def view_data():
 			rr = modbus.write_registers(0, 1, unit=UNIT)
 
 		if rr.isError() :
-			return "Error occured"
+			return "Modbus returned error"
 		return rr
 	return "Unable to connect"
 
