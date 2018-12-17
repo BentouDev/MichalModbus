@@ -5,3 +5,7 @@ img {
     width: auto;
     height: auto;
 }
+
+.not_implemented {
+  text-decoration: line-through;
+}

@@ -36,6 +36,20 @@ def index():
 	db_context = db.get_db()
 	data = {'message':'Error, check log'}
 
+	if 'message' in session:
+		data['message'] = session['message']
+
+	cur = db_context.cursor()
+	cur.execute ('SELECT * FROM widgets')
+	data['widgets'] = cur.fetchall()
+
+	db_context.close()
+
+	return render_template('index.html', title='Modbus', data = data)
+
+@app.route("/test_connection")
+def test_connection():
+	db_context = db.get_db()
 	cur = db_context.cursor()
 	cur.execute("SELECT * FROM data")
 	db_app_data = cur.fetchone()
@@ -56,14 +70,10 @@ def index():
                     data['message'] = "Modbus ip: " + session['address'] + " error: " + str(error)
 	else:
 		data['message'] = "No address set, not connected..."
-	
-	cur = db_context.cursor()
-	cur.execute ('SELECT * FROM widgets')
-	data['widgets'] = cur.fetchall()
 
-	db_context.close()
+	session['message'] = data['message']
 
-	return render_template('index.html', title='Modbus', data = data)
+	return redirect(url_for('index'))
 
 @app.route("/change_ip")
 def change_ip():
