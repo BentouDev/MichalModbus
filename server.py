@@ -210,9 +210,11 @@ def view_data():
 		unit = request.args.get('unit')
 		rr = None
 		if unit :
-			rr = modbus.write_registers(0, 1, unit=unit)
+			modbus.register_write_message.WriteMultipleRegistersResponse(40001, 1, [13])
+			#rr = modbus.write_registers(0, 1, unit=unit)
 		else :
-			rr = modbus.write_registers(0, 1, unit=UNIT)
+			modbus.register_write_message.WriteMultipleRegistersResponse(40001, 1, [13])
+			#rr = modbus.write_registers(0, 1, unit=UNIT)
 
 		if rr.isError() :
 			return "Modbus returned error"
