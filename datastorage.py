@@ -4,7 +4,7 @@ def get_server_data():
     db_context = db.get_db()
     cur = db_context.cursor()
     cur.execute("SELECT * FROM data")
-    return cur.fetchall()[0]
+    return cur.fetchone()
 
 def get_address():
     db_app_data = get_server_data()
@@ -14,8 +14,15 @@ def get_address():
     return None
 
 def set_address(address):
-    db_context = db.get_db()
-    cur = db_context.cursor()
-    cur.execute ('UPDATE data SET address = ?', [address])
-    db_context.commit()
-    print ("Set address to " + address)
+    if not get_server_data():
+        db_context = db.get_db()
+        cur = db_context.cursor()
+        cur.execute ('INSERT INTO data (address) VALUES (?)', [address])
+        db_context.commit()
+        print("Created db entry for data")
+    else:
+        db_context = db.get_db()
+        cur = db_context.cursor()
+        cur.execute ('UPDATE data SET address = ?', [address])
+        db_context.commit()
+        print ("Set address to " + address)
