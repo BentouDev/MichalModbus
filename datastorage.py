@@ -8,4 +8,6 @@ def get_server_data():
 
 def get_address():
     db_app_data = get_server_data()
-    return db_app_data['address']
+    if db_app_data
+        return db_app_data['address']
+    return None
