@@ -18,3 +18,4 @@ def set_address(address):
     cur = db_context.cursor()
     cur.execute ('UPDATE data SET address = ?', [address])
     db_context.commit()
+    print ("Set address to " + address)
