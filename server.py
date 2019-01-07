@@ -56,19 +56,17 @@ def test_connection():
 	db_app_data = cur.fetchone()
 
 	address = ''
-	
+
 	if db_app_data and 'address' in db_app_data:
 		address = db_app_data['address']
-	elif 'address' in session:
-		address = session['address']
 
 	if address:
             try:
                 modbus = sm.get_modbus()
                 if modbus:
-                    data['message'] = "Connected to modbus at " + session['address'] + "! Awaiting commands."
+                    data['message'] = "Connected to modbus at " + address + "! Awaiting commands."
             except Exception as error:
-                    data['message'] = "Modbus ip: " + session['address'] + " error: " + str(error)
+                    data['message'] = "Modbus ip: " + address + " error: " + str(error)
 	else:
 		data['message'] = "No address set, not connected..."
 
@@ -89,8 +87,6 @@ def change_ip():
 	
 	if db_app_data and 'address' in db_app_data:
 		address = db_app_data['address']
-	elif 'address' in session:
-		address = session['address']
 
 	return render_template('change_ip.html', address=address)
 
@@ -102,7 +98,6 @@ def set_ip():
 		cur = db_context.cursor()
 		cur.execute ('UPDATE data SET address = ? ', [address])
 		db_context.commit()
-		session['address'] = address
 
 	return redirect(url_for('test_connection'))
 
@@ -220,26 +215,6 @@ def view_data():
 			return "Modbus returned error"
 		return rr
 	return "Unable to connect"
-
-@app.route("/connect")
-def connect_to_server():
-	address = request.args.get('address')
-	if address:
-		session['address'] = address
-		try:
-			sm.get_modbus()
-			return "Connected"
-		except Exception as error:
-			return 'Caught error: ' + str(error)
-
-	return "No address passed!"
-		
-@app.route("/disconnect")
-def disconnect_from_server():
-	if 'address' in session :			
-		session['address'] = None
-		return "Disconnected!"
-	return "Nothing to disconnect!"
 
 def start():
 	app.run(debug=True, host='0.0.0.0')
