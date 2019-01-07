@@ -75,6 +75,7 @@ def change_ip():
 @app.route("/set_ip", methods=['GET', 'POST'])
 def set_ip():
 	address = request.args.get('address')
+	print("Got address " + address)
 	if address:
 		datastorage.set_address(address)
 	return redirect(url_for('test_connection'))
