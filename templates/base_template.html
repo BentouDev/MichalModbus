@@ -1,6 +1,9 @@
 {% extends "bootstrap/base.html" %}
 {% block title %}{{ title }} - Michal{% endblock %}
-
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+{% endblock %}
 {% block navbar %}
 <!-- Static navbar -->
 <nav class="navbar navbar-default navbar-fixed-top">
