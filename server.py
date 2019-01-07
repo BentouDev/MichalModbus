@@ -184,9 +184,9 @@ def view_data():
 		unit = request.args.get('unit')
 		rr = None
 		if unit :
-			rr = modbus.write_registers(40001, [10]*8, unit=unit)
+			rr = modbus.write_registers(40001, [0x10, 0xDEAD, 0xBEEF], unit=unit)
 		else :
-			rr = modbus.write_registers(40001, [10]*8, unit=UNIT)
+			rr = modbus.write_registers(40001, [0x10, 0xDEAD, 0xBEEF], unit=UNIT)
 
 		if rr.isError() :
 			return "Modbus returned error"
