@@ -69,29 +69,14 @@ def test_connection():
 
 @app.route("/change_ip")
 def change_ip():
-
-	db_context = db.get_db()
-
-	cur = db_context.cursor()
-	cur.execute("SELECT * FROM data")
-	db_app_data = cur.fetchone()
-
-	address = ''
-	
-	if db_app_data and 'address' in db_app_data:
-		address = db_app_data['address']
-
+	address = datastorage.get_address()
 	return render_template('change_ip.html', address=address)
 
 @app.route("/set_ip", methods=['GET', 'POST'])
 def set_ip():
 	address = request.args.get('address')
 	if address:
-		db_context = db.get_db()
-		cur = db_context.cursor()
-		cur.execute ('UPDATE data SET address = ? ', [address])
-		db_context.commit()
-
+		datastorage.set_address(address)
 	return redirect(url_for('test_connection'))
 
 @app.route("/toggle_widget", methods=['GET', 'POST'])
