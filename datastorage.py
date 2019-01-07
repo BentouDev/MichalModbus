@@ -4,7 +4,7 @@ def get_server_data():
     db_context = db.get_db()
     cur = db_context.cursor()
     cur.execute("SELECT * FROM data")
-    return cur.fetchone()
+    return cur.fetchall()[0]
 
 def get_address():
     db_app_data = get_server_data()
