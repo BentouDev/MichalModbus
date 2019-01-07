@@ -9,3 +9,7 @@ img {
 .not_implemented {
   text-decoration: line-through;
 }
+
+.container {
+  margin-top: 32ex;
+}
