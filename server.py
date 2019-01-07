@@ -9,7 +9,8 @@ from flask import url_for
 from flask_bootstrap import Bootstrap
 import modbus as sm
 import db as db
-	
+import datastorage as datastorage
+
 # Configure modbus client logging
 import logging
 FORMAT = ('%(asctime)-15s %(threadName)-15s '
@@ -50,23 +51,15 @@ def index():
 @app.route("/test_connection")
 def test_connection():
 	data = {'message':'Unknown error, check log'}
-	db_context = db.get_db()
-	cur = db_context.cursor()
-	cur.execute("SELECT * FROM data")
-	db_app_data = cur.fetchone()
-
-	address = ''
-
-	if db_app_data and 'address' in db_app_data:
-		address = db_app_data['address']
+	address = datastorage.get_address()
 
 	if address:
-            try:
-                modbus = sm.get_modbus()
-                if modbus:
-                    data['message'] = "Connected to modbus at " + address + "! Awaiting commands."
-            except Exception as error:
-                    data['message'] = "Modbus ip: " + address + " error: " + str(error)
+		try:
+			modbus = sm.get_modbus()
+			if modbus:
+				data['message'] = "Connected to modbus at " + address + "! Awaiting commands."
+		except Exception as error:
+				data['message'] = "Modbus ip: " + address + " error: " + str(error)
 	else:
 		data['message'] = "No address set, not connected..."
 
