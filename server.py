@@ -190,7 +190,7 @@ def view_data():
 
 		if rr.isError() :
 			return "Modbus returned error"
-		return rr
+		return string(rr)
 	return "Unable to connect"
 
 def start():
