@@ -177,16 +177,28 @@ def view_data():
 	modbus = sm.get_modbus()
 	if modbus :
 		unit = request.args.get('unit')
-		rr = None
 		if unit :
-			rr = modbus.write_registers(0x0, [0xFF]*10, unit=unit)
+			rr = send_widgets_via_modbus(unit)
 		else :
-			rr = modbus.write_registers(0x0, [0xFF]*10, unit=UNIT)
+			rr = send_widgets_via_modbus(UNIT)
 
 		if rr.isError() :
 			return "Modbus returned error"
 		return "Successfully : " + str(rr)
 	return "Unable to connect"
+
+def send_widgets_via_modbus():
+	widgets = datastorage.get_widgets()
+	i = 0
+	data = [0x0]*10
+	for w in widgets:
+		i += 1
+		if w['status'] == 1
+			data[i] = 255
+		else:
+			data[i] = 0x0
+	rr = modbus.write_registers(0x0, data, unit=UNIT)
+	return rr
 
 def start():
 	app.run(debug=True, host='0.0.0.0')
