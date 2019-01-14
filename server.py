@@ -187,7 +187,8 @@ def view_data():
 		return "Successfully : " + str(rr)
 	return "Unable to connect"
 
-def send_widgets_via_modbus():
+def send_widgets_via_modbus(unit_id):
+	modbus = sm.get_modbus()
 	widgets = datastorage.get_widgets()
 	i = 0
 	data = [0x0]*10
@@ -197,7 +198,7 @@ def send_widgets_via_modbus():
 			data[i] = 255
 		else:
 			data[i] = 0x0
-	rr = modbus.write_registers(0x0, data, unit=UNIT)
+	rr = modbus.write_registers(0x0, data, unit=unit_id)
 	return rr
 
 def start():
