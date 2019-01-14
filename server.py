@@ -193,7 +193,7 @@ def send_widgets_via_modbus():
 	data = [0x0]*10
 	for w in widgets:
 		i += 1
-		if w['status'] == 1
+		if w['status'] == 1:
 			data[i] = 255
 		else:
 			data[i] = 0x0
