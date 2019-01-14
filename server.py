@@ -184,13 +184,13 @@ def view_data():
 		unit = request.args.get('unit')
 		rr = None
 		if unit :
-			rr = modbus.write_registers(0x0, [0xFF]*10, unit=unit)
+		       	rr = modbus.write_registers(0x0, [0xFF]*10, unit=unit)
 		else :
 			rr = modbus.write_registers(0x0, [0xFF]*10, unit=UNIT)
 
 		if rr.isError() :
 			return "Modbus returned error"
-		return string(rr)
+		return "Successfully : " + str(rr)
 	return "Unable to connect"
 
 def start():
