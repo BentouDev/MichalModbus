@@ -34,17 +34,12 @@ UNIT = 0x0
 @app.route("/")
 @app.route("/index")
 def index():
-	db_context = db.get_db()
 	data = {'message':'Unknown error, check log'}
 
 	if 'message' in session:
 		data['message'] = session['message']
 
-	cur = db_context.cursor()
-	cur.execute ('SELECT * FROM widgets')
-	data['widgets'] = cur.fetchall()
-
-	db_context.close()
+	data['widgets'] = datastorage.get_widgets()
 
 	return render_template('index.html', title='Modbus', data = data)
 
@@ -184,7 +179,7 @@ def view_data():
 		unit = request.args.get('unit')
 		rr = None
 		if unit :
-		       	rr = modbus.write_registers(0x0, [0xFF]*10, unit=unit)
+			rr = modbus.write_registers(0x0, [0xFF]*10, unit=unit)
 		else :
 			rr = modbus.write_registers(0x0, [0xFF]*10, unit=UNIT)
 

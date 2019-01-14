@@ -26,3 +26,9 @@ def set_address(address):
         cur.execute ('UPDATE data SET address = ?', [address])
         db_context.commit()
         print ("Set address to " + address)
+
+def get_widgets():
+    db_context = db.get_db()
+    cur = db_context.cursor()
+    cur.execute ('SELECT * FROM widgets')
+    return cur.fetchall()
