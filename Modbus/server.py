@@ -118,16 +118,16 @@ def ProcessCommands():
         # when the node is stopped cleanly
         #
         # break
-        continue
+        sendLog(' [Error] Connection closed by broker')
+
     # Do not recover on channel errors
     except pika.exceptions.AMQPChannelError as err:
         sendLog(" [Error] Caught a channel error: {}, stopping...".format(err))
         exit()
-        break
+
     # Recover on all other connection errors
     except pika.exceptions.AMQPConnectionError:
         sendLog(" [Error] Connection was closed, retrying...")
-        continue
 
     # Write whatever was thrown
     except Exception as error:
