@@ -257,7 +257,13 @@ def send_widgets_via_modbus():
 
 	# Get widgets from database
 	data = {'command':'modbus_send'}
-	data['widgets'] = datastorage.get_widgets()
+	temp_widgets = datastorage.get_widgets()
+
+	temp_array = []
+	for widget in temp_widgets:
+		temp_array.insert({'status':widget['status']})
+	
+	data['widgets'] = temp_array
 
 	body = json.dumps(data)
 
