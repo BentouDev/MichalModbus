@@ -95,22 +95,26 @@ def send_to_modbus(widgets):
 def ProcessCommands():
     q, ch, cnn = openQueue(CommandQueue)
 
-    for method, properties, body in ch.consume(queue=q):
-        sendLog ('[*] Received ' + body)
-        datastore = json.loads(body)
+    try:
+        for method, properties, body in ch.consume(queue=q):
+            sendLog ('[*] Received ' + body)
+            datastore = json.loads(body)
 
-        # Refactor better
-        if datastore['command'] == 'ping':
-            modbus_ping()
+            # Refactor better
+            if datastore['command'] == 'ping':
+                modbus_ping()
 
-        if datastore['command'] == 'change_ip':
-            ModbusAddress = datastore['address']
-            sendLog('Succ: Changed Modbus ip to ' + ModbusAddress)
+            if datastore['command'] == 'change_ip':
+                ModbusAddress = datastore['address']
+                sendLog('Succ: Changed Modbus ip to ' + ModbusAddress)
 
-        if datastore['command'] == 'modbus_send':
-            send_to_modbus(datastore['widgets'])
+            if datastore['command'] == 'modbus_send':
+                send_to_modbus(datastore['widgets'])
 
-    closeQueue(ch, cnn)
+        closeQueue(ch, cnn)
+
+    except Exception as error:
+        sendLog("Error: Catched exception: " + str(error))
 
 def ProcessEvents():
     q, ch, cnn = openQueue(EventQueue)
