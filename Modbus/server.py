@@ -112,7 +112,7 @@ def ProcessCommands():
 
         closeQueue(ch, cnn)
 
-    except Exception as error:
+    except (pika.exceptions.AMQPConnectionError, pika.exceptions.AMQPChannelError) as error:
         sendLog(" [Error] Catched exception: " + str(error))
 
 def ProcessEvents():
