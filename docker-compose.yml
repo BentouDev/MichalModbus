@@ -6,3 +6,5 @@ rabbitmq:
     - 5672:5672
 ModbusServer:
   image: bentou/michalmodbus
+  ports:
+    - 80:5000
