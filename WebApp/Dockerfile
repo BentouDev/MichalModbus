@@ -1,9 +1,5 @@
-FROM library/ubuntu:artful
+FROM python:3
 MAINTAINER Jakub Bentkowski <bentkowski.jakub@gmail.com>
-
-RUN apt-get install -y \
-    python-pip \
-    python-dev
 
 RUN pip install flask flask-jsonpify flask-sqlalchemy flask-restful
 RUN pip install flask-bootstrap
