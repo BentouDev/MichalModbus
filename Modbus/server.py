@@ -111,8 +111,26 @@ def ProcessCommands():
                 send_to_modbus(datastore['widgets'])
 
         closeQueue(ch, cnn)
+    
+    except pika.exceptions.ConnectionClosedByBroker:
+        # Uncomment this to make the example not attempt recovery
+        # from server-initiated connection closure, including
+        # when the node is stopped cleanly
+        #
+        # break
+        continue
+    # Do not recover on channel errors
+    except pika.exceptions.AMQPChannelError as err:
+        sendLog(" [Error] Caught a channel error: {}, stopping...".format(err))
+        exit()
+        break
+    # Recover on all other connection errors
+    except pika.exceptions.AMQPConnectionError:
+        sendLog(" [Error] Connection was closed, retrying...")
+        continue
 
-    except (pika.exceptions.AMQPConnectionError, pika.exceptions.AMQPChannelError) as error:
+    # Write whatever was thrown
+    except Exception as error:
         sendLog(" [Error] Catched exception: " + str(error))
 
 def ProcessEvents():
@@ -124,10 +142,14 @@ def ProcessEvents():
 def start():
     sendLog(' Running...')
     sendLog(' [*] Waiting for messages. To exit press CTRL+C')
-    while True:
-        #ProcessEvents()
-        ProcessCommands()
-        time.sleep(1)
+    try:
+        while True:
+            #ProcessEvents()
+            ProcessCommands()
+            time.sleep(1)
+        except KeyboardInterrupt:
+            print(" Closed")
+            break
 
 if __name__ == '__main__':
     start()
