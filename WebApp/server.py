@@ -2,6 +2,7 @@
 # Import all libraries used by this project
 # System library
 import sys
+import json
 # Flask library
 from flask import Flask
 from flask import request
@@ -11,8 +12,9 @@ from flask import redirect
 from flask import url_for
 # Bootstrap library extension for Flask
 from flask_bootstrap import Bootstrap
-# Our own modbus and database modules
-import modbus as sm
+
+import pika
+
 import db as db
 import datastorage as datastorage
 
@@ -24,16 +26,31 @@ logging.basicConfig(format=FORMAT)
 log = logging.getLogger()
 log.setLevel(logging.DEBUG)
 
-# Predeclare global variables
-UNIT = 0x0
-server = None
-
 # Create flask server app
 app = Flask(__name__)
 app.secret_key = b')xDEADBEEF'
 
 # Initialize bootstrap
 Bootstrap(app)
+
+# Queue helper methods
+GlobalHost = '137.117.194.116'
+CommandQueue = 'modbus_commands'
+EventQueue = 'modbus_events'
+LogQueue = 'log_queue'
+
+def openQueue(name):
+    connection = pika.BlockingConnection(
+        pika.ConnectionParameters(host=GlobalHost))
+
+    channel = connection.channel()
+    queue = channel.queue_declare(queue=name)
+
+    return queue, channel, connection
+
+def closeQueue(ch, cnn):
+    ch.close()
+    cnn.close()
 
 ########################################################
 # Definitions of all methods which can be run on server
@@ -64,25 +81,19 @@ def index():
 def test_connection():
 	# put default message into page data dictionary
 	data = {'message':'Unknown error, check log'}
-	
-	# Try get modbus address from database
-	address = datastorage.get_address()
 
-	# Depending on address being in database, or not print success or error
-	if address:
-		try:
-			# Try connect to modbus, watch out for throwed exceptions
-			modbus = sm.get_modbus()
-			if modbus:
-				# Success
-				data['message'] = "Connected to modbus at " + address + "! Awaiting commands."
-		except Exception as error:
-				data['message'] = "Modbus ip: " + address + " error: " + str(error)
-	else:
-		data['message'] = "No address set, not connected..."
+	q, ch, cnn = openQueue(CommandQueue)
+	
+	data = {'command':'modbus_ping'}
+
+	body = json.dumps(data)
+
+	ch.basic_publish(exchange='', routing_key=q, body=body)
 
 	# Cache last message in session
-	session['message'] = data['message']
+	session['message'] = "Check log"
+
+	closeQueue(ch, cnn)
 
 	# Redirect to index
 	return redirect(url_for('index'))
@@ -188,7 +199,7 @@ def post_edit():
 	if 'Submit' in request.args:
 		app.logger.warning("Submit: " + request.args['Submit'])
 		if request.args['Submit'] == 'Commit':
-			add_widget()
+			add_new_widget()
 		elif request.args['Submit'] == 'Update':
 			widget_id = request.args.get('widget_id', 0)
 			if widget_id:
@@ -214,7 +225,7 @@ def update_widget(id):
 	db_context.commit()
 
 # Add widget - method which simplifies creation of widget in database
-def add_widget():
+def add_new_widget():
 	name = request.args.get("name")
 	type_id = request.args.get("type")
 	img = request.args.get("img")
@@ -236,46 +247,24 @@ def delete_widget(id):
 # View widget - main test method, sends statuses of widgets via modbus to server
 @app.route("/view_data")
 def view_data():
-	modbus = sm.get_modbus()
-	if modbus :
-		# Get modbus Unit id (currently always 0)
-		unit = request.args.get('unit')
-		if unit :
-			rr = send_widgets_via_modbus(unit)
-		else :
-			rr = send_widgets_via_modbus(UNIT)
-
-		if rr.isError() :
-			return "Modbus returned error"
-		return "Successfully : " + str(rr)
-	return "Unable to connect"
+	send_widgets_via_modbus()
+	return "Check log"
 
 # Send widgets via modbus - utility method for modbus packet creation
-def send_widgets_via_modbus(unit_id):
+def send_widgets_via_modbus():
 	# Connect to modbus
-	modbus = sm.get_modbus()
-	
+	#modbus = sm.get_modbus()
+
 	# Get widgets from database
-	widgets = datastorage.get_widgets()
-	i = 0
-	
-	# Preallocate memory for data
-	data = [0x0]*10
-	
-	# Foreachn widget
-	for w in widgets:
-		# Increase index
-		i += 1
-	
-		# Depending on status, put 0000 or 1111 (binary)
-		if w['status'] == 1:
-			data[i] = 255
-		else:
-			data[i] = 0x0
-	
-	# Write to multiple registers
-	rr = modbus.write_registers(0x0, data, unit=unit_id)
-	return rr
+	data = {'command':'modbus_send'}
+	data['widgets'] = datastorage.get_widgets()
+
+	body = json.dumps(data)
+
+	q, ch, cnn = openQueue(CommandQueue)
+	ch.basic_publish(exchange='', routing_key=LogQueue, body=body)
+	closeQueue(ch, cnn)
+
 
 # Python specific - startup of flask server
 def start():

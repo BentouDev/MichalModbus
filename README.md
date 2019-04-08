@@ -1,23 +1,23 @@
 ## Dependencies
+### Flask webapp
+```sh
+$ python3 -m pip install flask flask-jsonpify flask-sqlalchemy flask-restful
+$ python3 -m pip install flask-bootstrap
+$ python3 -m pip install pika
+```
+
+### Modbus server
 ```sh
 $ python3 -m pip install pymodbus
-$ python3 -m pip install flask flask-jsonpify flask-sqlalchemy flask-restful
-$ python3 -m pip install blynk-library-python
-$ python3 -m pip install flask-bootstrap
+$ python3 -m pip install pika
 ```
 
 ## Run
+### Web application
 ```sh
-python3 server.py
+python3 WebApp/server.py
 ```
-
-## Usage
-```
-# try to connect to modbus server at given ip address
-/connect?address=192.168.0.1 
-```
-
-```
-# disconnect from current modbus server
-/disconnect
+### Modbus server
+```sh
+python3 Modbus/server.py
 ```
