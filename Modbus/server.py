@@ -57,7 +57,7 @@ def sendLog(msg):
 def modbus_ping():
     try:
         # Connect to modbus
-        modbus = sm.get_modbus()
+        modbus = sm.get_modbus(ModbusAddress)
         sendLog('Succ: Modbus alive at ip: ' + ModbusAddress)
     except Exception as error:
         sendLog("Error: Modbus ip: " + ModbusAddress + " error: " + str(error))
@@ -65,7 +65,7 @@ def modbus_ping():
 def send_to_modbus(widgets):
     try:
         # Connect to modbus
-        modbus = sm.get_modbus()
+        modbus = sm.get_modbus(ModbusAddress)
         i = 0
         # Preallocate memory for data
         data = [0x0]*10
