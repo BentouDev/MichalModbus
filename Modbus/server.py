@@ -10,11 +10,11 @@ import modbus as sm
 
 # Configure modbus client logging, so server prints out errors to server console
 import logging
-FORMAT = ('%(asctime)-15s %(threadName)-15s '
-          '%(levelname)-8s %(module)-15s:%(lineno)-8s %(message)s')
-logging.basicConfig(format=FORMAT)
-log = logging.getLogger()
-log.setLevel(logging.DEBUG)
+# FORMAT = ('%(asctime)-15s %(threadName)-15s '
+#           '%(levelname)-8s %(module)-15s:%(lineno)-8s %(message)s')
+# logging.basicConfig(format=FORMAT)
+# log = logging.getLogger()
+# log.setLevel(logging.DEBUG)
 
 # Predeclare global variables
 UNIT = 0x0
@@ -26,7 +26,7 @@ UNIT = 0x0
 # Send messages:
 #   - Data changed
 
-SendLogToServer = True
+SendLogToServer = False
 ModbusAddress = '0.0.0.0'
 GlobalHost = '137.117.194.116'
 CommandQueue = 'modbus_commands'
@@ -50,9 +50,12 @@ def sendLog(msg):
     print(msg)
 
     if SendLogToServer:
-        q, ch, cnn = openQueue(LogQueue)
-        ch.basic_publish(exchange='', routing_key=LogQueue, body=msg)
-        closeQueue(ch, cnn)
+        try:
+            q, ch, cnn = openQueue(LogQueue)
+            ch.basic_publish(exchange='', routing_key=LogQueue, body=msg)
+            closeQueue(ch, cnn)
+        except Exception as error:
+            print("Unable to send log due to: " + error)
 
 def modbus_ping():
     try:
