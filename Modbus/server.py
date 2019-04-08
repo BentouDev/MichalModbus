@@ -93,9 +93,8 @@ def send_to_modbus(widgets):
         sendLog("Error: Modbus ip: " + ModbusAddress + " error: " + str(error))
 
 def ProcessCommands():
-    q, ch, cnn = openQueue(CommandQueue)
-
     try:
+        q, ch, cnn = openQueue(CommandQueue)
         for method, properties, body in ch.consume(queue=q):
             sendLog ('[*] Received ' + body)
             datastore = json.loads(body)
