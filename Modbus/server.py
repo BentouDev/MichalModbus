@@ -55,15 +55,15 @@ def sendLog(msg):
             ch.basic_publish(exchange='', routing_key=LogQueue, body=msg)
             closeQueue(ch, cnn)
         except Exception as error:
-            print("Unable to send log due to: " + error)
+            print(" [Error] Unable to send log due to: " + error)
 
 def modbus_ping():
     try:
         # Connect to modbus
         modbus = sm.get_modbus(ModbusAddress)
-        sendLog('Succ: Modbus alive at ip: ' + ModbusAddress)
+        sendLog(' [Succ] Modbus alive at ip: ' + ModbusAddress)
     except Exception as error:
-        sendLog("Error: Modbus ip: " + ModbusAddress + " error: " + str(error))
+        sendLog(" [Error] Modbus ip: " + ModbusAddress + " error: " + str(error))
 
 def send_to_modbus(widgets):
     try:
@@ -86,11 +86,11 @@ def send_to_modbus(widgets):
 
         # Write to multiple registers
         rr = modbus.write_registers(0x0, data, unit=UNIT)
-        sendLog("Info: sending data to modbus at " + ModbusAddress + "...")
+        sendLog(" [Info] sending data to modbus at " + ModbusAddress + "...")
         return rr
 
     except Exception as error:
-        sendLog("Error: Modbus ip: " + ModbusAddress + " error: " + str(error))
+        sendLog(" [Error] Modbus ip: " + ModbusAddress + " error: " + str(error))
 
 def ProcessCommands():
     try:
@@ -113,7 +113,7 @@ def ProcessCommands():
         closeQueue(ch, cnn)
 
     except Exception as error:
-        sendLog("Error: Catched exception: " + str(error))
+        sendLog(" [Error] Catched exception: " + str(error))
 
 def ProcessEvents():
     q, ch, cnn = openQueue(EventQueue)
