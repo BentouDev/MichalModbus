@@ -34,7 +34,7 @@ app.secret_key = b')xDEADBEEF'
 Bootstrap(app)
 
 # Queue helper methods
-GlobalHost = '137.117.194.116'
+GlobalHost = 'amqp://login:password@host:5672/'
 CommandQueue = 'modbus_commands'
 EventQueue = 'modbus_events'
 LogQueue = 'log_queue'

@@ -28,7 +28,7 @@ UNIT = 0x0
 
 SendLogToServer = False
 ModbusAddress = '0.0.0.0'
-GlobalHost = '137.117.194.116'
+GlobalHost = 'ampq://137.117.194.116:5672'
 CommandQueue = 'modbus_commands'
 EventQueue = 'modbus_events'
 LogQueue = 'log_queue'
