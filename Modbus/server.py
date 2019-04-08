@@ -142,12 +142,13 @@ def ProcessEvents():
 def start():
     sendLog(' Running...')
     sendLog(' [*] Waiting for messages. To exit press CTRL+C')
-    try:
-        while True:
+
+    while True:
+        try:
             #ProcessEvents()
             ProcessCommands()
             time.sleep(1)
-        except KeyboardInterrupt:
+        except KeyboardInterrupt :
             print(" Closed")
             break
 
