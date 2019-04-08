@@ -52,6 +52,32 @@ def closeQueue(ch, cnn):
     ch.close()
     cnn.close()
 
+def publishToQueue(queueName, msg):
+	try:
+		q, ch, cnn = openQueue(queueName)
+		ch.basic_publish(exchange='', routing_key=LogQueue, body=msg)
+		closeQueue(ch, cnn)
+
+	except pika.exceptions.ConnectionClosedByBroker:
+		# Uncomment this to make the example not attempt recovery
+		# from server-initiated connection closure, including
+		# when the node is stopped cleanly
+		#
+		# break
+		app.logger.error(' [Error] Connection closed by broker')
+
+	# Do not recover on channel errors
+	except pika.exceptions.AMQPChannelError as err:
+		app.logger.error(" [Error] Caught a channel error: {}, stopping...".format(err))
+
+	# Recover on all other connection errors
+	except pika.exceptions.AMQPConnectionError:
+		app.logger.error(" [Error] Connection was closed, retrying...")
+
+	# Write whatever was thrown
+	except Exception as error:
+		app.logger.error(" [Error] Catched exception: " + str(error))
+
 ########################################################
 # Definitions of all methods which can be run on server
 ########################################################
@@ -267,10 +293,7 @@ def send_widgets_via_modbus():
 
 	body = json.dumps(data)
 
-	q, ch, cnn = openQueue(CommandQueue)
-	ch.basic_publish(exchange='', routing_key=LogQueue, body=body)
-	closeQueue(ch, cnn)
-
+	publishToQueue(CommandQueue, body)
 
 # Python specific - startup of flask server
 def start():
