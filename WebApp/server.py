@@ -34,10 +34,24 @@ app.secret_key = b')xDEADBEEF'
 Bootstrap(app)
 
 # Queue helper methods
-GlobalHost = 'amqp://login:password@host:5672/'
+GlobalHost = 'amqp://0.0.0.0:5672/'
 CommandQueue = 'modbus_commands'
 EventQueue = 'modbus_events'
 LogQueue = 'log_queue'
+
+def trySet(data, name, default):
+	if data.get(name):
+		return data.get(name)
+	return default
+
+def loadConfig():
+	config_path = 'webapp.config'
+	data = json.loads(config_path)
+	global GlobalHost, CommandQueue, EventQueue, LogQueue
+	GlobalHost = trySet(data, 'QueueHost', 'ampq://0.0.0.0:5672')
+	CommandQueue = trySet(data, 'CommandQueue', 'modbus_commands')
+	EventQueue = trySet(data, 'EventQueue', 'modbus_events')
+	LogQueue = trySet(data, 'LogQueue', 'log_queue')
 
 def openQueue(name):
     connection = pika.BlockingConnection(
@@ -297,6 +311,7 @@ def send_widgets_via_modbus():
 
 # Python specific - startup of flask server
 def start():
+	loadConfig()
 	app.run(debug=True, host='0.0.0.0')
 
 if __name__ == '__main__':
