@@ -6,7 +6,7 @@ rabbitmq:
     - 5672:5672
   volumes:
     - "./enabled_plugins:/etc/rabbitmq/enabled_plugins"
-    - "./../rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro"
+    - "./../../rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro"
 ModbusServer:
   image: bentou/michalmodbus
   ports:
