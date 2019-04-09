@@ -38,7 +38,7 @@ def openQueue(name):
         pika.connection.URLParameters(GlobalHost))
 
     channel = connection.channel()
-    queue = channel.queue_declare(queue=name)
+    queue = channel.queue_declare(queue=name,durable=True)
 
     return queue, channel, connection
 
