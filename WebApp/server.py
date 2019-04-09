@@ -46,12 +46,15 @@ def trySet(data, name, default):
 
 def loadConfig():
 	config_path = 'webapp.config'
-	data = json.loads(config_path)
-	global GlobalHost, CommandQueue, EventQueue, LogQueue
-	GlobalHost = trySet(data, 'QueueHost', 'ampq://0.0.0.0:5672')
-	CommandQueue = trySet(data, 'CommandQueue', 'modbus_commands')
-	EventQueue = trySet(data, 'EventQueue', 'modbus_events')
-	LogQueue = trySet(data, 'LogQueue', 'log_queue')
+	with open(config_path,'r') as config_file:
+		data = json.loads(config_file.read())
+
+		global GlobalHost, CommandQueue, EventQueue, LogQueue
+
+		GlobalHost = trySet(data, 'QueueHost', 'ampq://0.0.0.0:5672')
+		CommandQueue = trySet(data, 'CommandQueue', 'modbus_commands')
+		EventQueue = trySet(data, 'EventQueue', 'modbus_events')
+		LogQueue = trySet(data, 'LogQueue', 'log_queue')
 
 def openQueue(name):
     connection = pika.BlockingConnection(
