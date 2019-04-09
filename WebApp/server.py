@@ -71,6 +71,7 @@ def closeQueue(ch, cnn):
 
 def publishToQueue(queueName, msg):
 	try:
+		print(' [DEBUG] Publishing to queue ' + queueName)
 		q, ch, cnn = openQueue(queueName)
 		ch.basic_publish(exchange='', routing_key=LogQueue, body=msg)
 		closeQueue(ch, cnn)
