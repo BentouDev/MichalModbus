@@ -159,6 +159,7 @@ def ProcessEvents():
 # Python specific - startup of  server
 def start():
     loadConfig()
+    sendLog(' Queue host : ' + GlobalHost)
     sendLog(' Running...')
     sendLog(' [*] Waiting for messages. To exit press CTRL+C')
 
