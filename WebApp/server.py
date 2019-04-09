@@ -46,19 +46,22 @@ def trySet(data, name, default):
 
 def loadConfig():
 	config_path = 'webapp.config'
-	data = json.loads(config_path)
-	global GlobalHost, CommandQueue, EventQueue, LogQueue
-	GlobalHost = trySet(data, 'QueueHost', 'ampq://0.0.0.0:5672')
-	CommandQueue = trySet(data, 'CommandQueue', 'modbus_commands')
-	EventQueue = trySet(data, 'EventQueue', 'modbus_events')
-	LogQueue = trySet(data, 'LogQueue', 'log_queue')
+	with open(config_path,'r') as config_file:
+		data = json.loads(config_file.read())
+
+		global GlobalHost, CommandQueue, EventQueue, LogQueue
+
+		GlobalHost = trySet(data, 'QueueHost', 'ampq://0.0.0.0:5672')
+		CommandQueue = trySet(data, 'CommandQueue', 'modbus_commands')
+		EventQueue = trySet(data, 'EventQueue', 'modbus_events')
+		LogQueue = trySet(data, 'LogQueue', 'log_queue')
 
 def openQueue(name):
     connection = pika.BlockingConnection(
         pika.connection.URLParameters(GlobalHost))
 
     channel = connection.channel()
-    queue = channel.queue_declare(queue=name)
+    queue = channel.queue_declare(queue=name,durable=True)
 
     return queue, channel, connection
 
@@ -121,19 +124,15 @@ def index():
 def test_connection():
 	# put default message into page data dictionary
 	data = {'message':'Unknown error, check log'}
-
-	q, ch, cnn = openQueue(CommandQueue)
 	
 	data = {'command':'modbus_ping'}
 
 	body = json.dumps(data)
 
-	ch.basic_publish(exchange='', routing_key=q, body=body)
+	publishToQueue(CommandQueue, body)
 
 	# Cache last message in session
 	session['message'] = "Check log"
-
-	closeQueue(ch, cnn)
 
 	# Redirect to index
 	return redirect(url_for('index'))

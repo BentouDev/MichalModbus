@@ -33,12 +33,30 @@ CommandQueue = 'modbus_commands'
 EventQueue = 'modbus_events'
 LogQueue = 'log_queue'
 
+def trySet(data, name, default):
+	if data.get(name):
+		return data.get(name)
+	return default
+
+def loadConfig():
+	config_path = 'modbus.config'
+	with open(config_path,'r') as config_file:
+		data = json.loads(config_file.read())
+
+		global GlobalHost, CommandQueue, EventQueue, LogQueue, ModbusAddress
+
+		ModbusAddress = trySet(data, 'ModbusAddress', '0.0.0.0')
+		GlobalHost = trySet(data, 'QueueHost', 'ampq://0.0.0.0:5672')
+		CommandQueue = trySet(data, 'CommandQueue', 'modbus_commands')
+		EventQueue = trySet(data, 'EventQueue', 'modbus_events')
+		LogQueue = trySet(data, 'LogQueue', 'log_queue')
+
 def openQueue(name):
     connection = pika.BlockingConnection(
         pika.connection.URLParameters(GlobalHost))
 
     channel = connection.channel()
-    queue = channel.queue_declare(queue=name)
+    queue = channel.queue_declare(queue=name,durable=True)
 
     return queue, channel, connection
 
@@ -140,6 +158,7 @@ def ProcessEvents():
 
 # Python specific - startup of  server
 def start():
+    loadConfig()
     sendLog(' Running...')
     sendLog(' [*] Waiting for messages. To exit press CTRL+C')
 
