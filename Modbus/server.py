@@ -113,7 +113,8 @@ def send_to_modbus(widgets):
 def ProcessCommands():
     try:
         q, ch, cnn = openQueue(CommandQueue)
-        for method, properties, body in ch.consume(queue=CommandQueue):
+        for method, properties, rawData in ch.consume(queue=CommandQueue):
+            body = rawData.decode("utf-8") 
             sendLog ('[*] Received ' + body)
             datastore = json.loads(body)
 
