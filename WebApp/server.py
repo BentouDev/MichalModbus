@@ -41,7 +41,7 @@ LogQueue = 'log_queue'
 
 def openQueue(name):
     connection = pika.BlockingConnection(
-        pika.ConnectionParameters(host=GlobalHost))
+        pika.connection.URLParameters(GlobalHost))
 
     channel = connection.channel()
     queue = channel.queue_declare(queue=name)
