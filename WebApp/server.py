@@ -73,7 +73,7 @@ def publishToQueue(queueName, msg):
 	try:
 		print(' [DEBUG] Publishing to queue ' + queueName)
 		q, ch, cnn = openQueue(queueName)
-		ch.basic_publish(exchange='', routing_key=LogQueue, body=msg)
+		ch.basic_publish(exchange='', routing_key=queueName, body=msg)
 		closeQueue(ch, cnn)
 
 	except pika.exceptions.ConnectionClosedByBroker:
