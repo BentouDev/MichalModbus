@@ -124,19 +124,15 @@ def index():
 def test_connection():
 	# put default message into page data dictionary
 	data = {'message':'Unknown error, check log'}
-
-	q, ch, cnn = openQueue(CommandQueue)
 	
 	data = {'command':'modbus_ping'}
 
 	body = json.dumps(data)
 
-	ch.basic_publish(exchange='', routing_key=q, body=body)
+	publishToQueue(CommandQueue, body)
 
 	# Cache last message in session
 	session['message'] = "Check log"
-
-	closeQueue(ch, cnn)
 
 	# Redirect to index
 	return redirect(url_for('index'))
