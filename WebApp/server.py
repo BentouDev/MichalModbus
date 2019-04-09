@@ -300,7 +300,7 @@ def send_widgets_via_modbus():
 
 	temp_array = []
 	for widget in temp_widgets:
-		temp_array.insert({'status':widget['status']})
+		temp_array.append({'status':widget['status']})
 	
 	data['widgets'] = temp_array
 
