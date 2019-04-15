@@ -184,6 +184,7 @@ def set_temp():
 	widget_id = request.args.get('widget_id', 0)
 	data_float_0 = request.args.get('data_float_0', 0)
 	data_float_1 = request.args.get('data_float_1', 0)
+	status_id = request.args.get('Toggle', 0)
 
 	if not widget_id:
 		# If theres no widget id in form, return error and redirect to index
@@ -204,6 +205,10 @@ def set_temp():
 	if data_float_1:
 		cur.execute ('UPDATE widgets SET data_float_1 = ? WHERE id == ?', [data_float_1, widget_id])
 		logger.info (" [Info] Changed data_float_1 of '" + widgets['name'] + "' to '" + str(data_float_1) + "'!")
+
+	if status_id:
+		cur.execute ('UPDATE widgets SET status = ? WHERE id == ?', [status_id, widget_id])
+		logger.info (" [Info] Changed status of '" + widgets['name'] + "' to '" + str(status_id) + "'!")
 
 	send_widgets_via_modbus()
 
