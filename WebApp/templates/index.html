@@ -40,11 +40,23 @@
                             {% elif widget.type == 2 %}
                                 <form action="/set_data">
                                     <input type="hidden" value="{{widget.id}}" name="widget_id" />
-                                    <div class="btn-group btn-toggle">
-                                        <button type="submit" name="Toggle" class="btn btn-sm btn-primary">SET</button>
+                                    <div class="row">
+                                        <div class="col-sm-4 btn-group btn-toggle">
+                                        {% set labels=["OFF","ON"] %}
+                                        {% for x in range(2) %}
+                                            <button value="{{x}}" type="submit" name="Toggle" class="btn btn-sm {% if widget.status == x %} btn-default active {% else %} btn-primary {% endif %}">{{labels[x]}}</button>
+                                        {% endfor %}
+                                        </div>
                                     </div>
-                                    <input class="col-sm-5" type="number" value="{{widget.data_float_0}}" name="data_float_0" disabled>
-                                    <input class="col-sm-5" type="number" value="{{widget.data_float_1}}" name="data_float_1">
+                                    <div class="row">
+                                        <div>
+                                            <div class="col-sm-2 btn-group btn-toggle">
+                                                <button type="submit" name="Toggle" class="btn btn-sm btn-primary">SET</button>
+                                            </div>
+                                            <input class="col-sm-6" type="number" value="{{widget.data_float_1}}" name="data_float_1">
+                                            <input class="col-sm-6" type="number" value="{{widget.data_float_0}}" name="data_float_0" disabled>
+                                        </div>
+                                    </div>
                                 </form>
                             {% elif widget.type == 3 %}
                                 <form action="/set_status">

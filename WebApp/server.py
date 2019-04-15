@@ -34,7 +34,7 @@ handler.setLevel(logging.INFO)
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
-logger.addHandler(handler)
+#logger.addHandler(handler)
 
 # Create flask server app
 app = Flask(__name__)
@@ -306,7 +306,7 @@ def show_log():
 		q, ch, cnn = openQueue(LogQueue)
 		for method, properties, rawData in ch.consume(queue=CommandQueue):
 			body = rawData.decode("utf-8")
-			logger.info(body)
+			logger.info(' [RASP]' + body)
 	except Exception as error:
 		logger.error(" [Error] Unable to open queue " + LogQueue)
 
@@ -320,19 +320,38 @@ def show_log():
 
 # Update widget - method which simplifies updating widget in database
 def update_widget(id):
+	logger.info (' [Info] Editing widget id ' + id)
+
 	name = request.args.get("name")
 	type_id = request.args.get("type")
 	img = request.args.get("img")
 
 	modbus_write_0 = request.args.get("modbus_write_0")
+	modbus_write_1 = request.args.get("modbus_write_1")
 	modbus_read_0 = request.args.get("modbus_reader_0")
+
+	base_cmd = 'UPDATE widgets SET name = ?, type = ?, img = ?'
+	base_data = [name, type_id, img]
+
+	if modbus_write_0:
+		base_cmd += ', modbus_write_0 = ?'
+		base_data.append(modbus_write_0)
+
+	if modbus_write_1:
+		base_cmd += ', modbus_write_1 = ?'
+		base_data.append(modbus_write_1)
+
+	if modbus_read_0:
+		base_cmd += ', modbus_read_0 = ?'
+		base_data.append(modbus_read_0)
+
+	base_cmd += ' WHERE id == ?'
+	base_data.append(id)
 
 	# Update existing widget by id in database
 	db_context = db.get_db()
 	cur = db_context.cursor()
-	cur.execute (
-		'UPDATE widgets SET name = ?, type = ?, img = ?, modbus_write_0 = ?, modbus_read_0 = ? WHERE id == ?', 
-		[name, type_id, img, id, modbus_write_0, modbus_read_0])
+	cur.execute (base_cmd, base_data)
 
 	db_context.commit()
 
@@ -376,14 +395,25 @@ def send_widgets_via_modbus():
 		type_id = widget['type']
 		if type_id == 1 or type_id == 3: # Simple status for Light and Blinders
 			temp_array.append({
+				'type':type_id,
 				'status':widget['status'],
-				'byte_write':widget['modbus_write_0']
+				'modbus_write_0':widget['modbus_write_0']
 			})
-		elif type_id == 2 or type_id == 4: # Value for Temperature and Alarm
+		elif type_id == 2: # Value for Temperature 
 			temp_array.append({
-				'value':widget['data_float_0'],
-				'byte_write':widget['modbus_write_0'],
-				'byte_read':widget['modbus_read_0']
+				'type':type_id,
+				'status':widget['status'],
+				'data_float_0':widget['data_float_0'],
+				'modbus_write_0':widget['modbus_write_0'],
+				'modbus_write_1':widget['modbus_write_1'],
+				'modbus_read_0':widget['modbus_read_0']
+			})
+		elif type_id == 4: # Value for Alarm
+			temp_array.append({
+				'type':type_id,
+				'data_float_0':widget['data_float_0'],
+				'modbus_write_0':widget['modbus_write_0'],
+				'modbus_read_0':widget['modbus_read_0']
 			})
 
 	data['widgets'] = temp_array

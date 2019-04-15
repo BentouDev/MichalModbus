@@ -4,10 +4,18 @@
 {{ super() }}
 <div class = "container">
     <h3>Modbus: </h2>
+        <p>(NOTICE: After changing widget type, enter edit mode once more to change Modbus register ID's!)</p>
     <div class="row">
         <h4 class="col-sm-1">Registers</h4>
-        <div class="col-sm-2">Write (MW)<input form="widget" value="{{widget.modbus_write_0}}" name="modbus_write_0"></div>
+        {% if widget.type != 4 %}
+        <div class="col-sm-2">Write status (MW)<input form="widget" value="{{widget.modbus_write_0}}" name="modbus_write_0"></div>
+        {% endif %}
+        {% if widget.type == 2 %}
+        <div class="col-sm-2">Write value (MW)<input form="widget" value="{{widget.modbus_write_1}}" name="modbus_write_1"></div>
+        {% endif %}
+        {% if widget.type == 2 or widget.type == 4 %}
         <div class="col-sm-2">Read (MW)<input form="widget" value="{{widget.modbus_read_0}}" name="modbus_read_0"></div>
+        {% endif %}
     </div>
 </div>
 <div class = "container">
@@ -15,5 +23,7 @@
     <button form="widget" class="btn btn-default" type="submit" name="Submit" value="Cancel">Cancel</button>
     <button form="widget" class="btn btn-danger" type="submit" name="Submit" value="Delete">Delete</button>
     <button form="widget" class="btn btn-success" type="submit" name="Submit" value="Update" value="Commit">Save</button>
+</div>
+</form>
 </div>
 {% endblock %}
