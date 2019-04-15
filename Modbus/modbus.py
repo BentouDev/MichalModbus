@@ -7,4 +7,5 @@ def get_modbus(address):
 		modbus = ModbusClient(address, port=502, timeout=10)
 		if not modbus.connect():
 			raise Exception("Unable to connect to modbus, check log for errors")
-	modbus
+		return modbus
+	return None

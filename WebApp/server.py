@@ -20,11 +20,21 @@ import datastorage as datastorage
 
 # Configure modbus client logging, so server prints out errors to server console
 import logging
+import logging.handlers as handlers
+import time
+
 FORMAT = ('%(asctime)-15s %(threadName)-15s '
           '%(levelname)-8s %(module)-15s:%(lineno)-8s %(message)s')
 logging.basicConfig(format=FORMAT)
-log = logging.getLogger()
-log.setLevel(logging.DEBUG)
+
+log_path = 'webapp.log'
+
+handler = handlers.RotatingFileHandler(log_path, maxBytes=2048, backupCount=5)
+handler.setLevel(logging.INFO)
+
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+logger.addHandler(handler)
 
 # Create flask server app
 app = Flask(__name__)
@@ -46,15 +56,18 @@ def trySet(data, name, default):
 
 def loadConfig():
 	config_path = 'webapp.config'
-	with open(config_path,'r') as config_file:
-		data = json.loads(config_file.read())
+	try:
+		with open(config_path,'r') as config_file:
+			data = json.loads(config_file.read())
 
-		global GlobalHost, CommandQueue, EventQueue, LogQueue
+			global GlobalHost, CommandQueue, EventQueue, LogQueue
 
-		GlobalHost = trySet(data, 'QueueHost', 'ampq://0.0.0.0:5672')
-		CommandQueue = trySet(data, 'CommandQueue', 'modbus_commands')
-		EventQueue = trySet(data, 'EventQueue', 'modbus_events')
-		LogQueue = trySet(data, 'LogQueue', 'log_queue')
+			GlobalHost = trySet(data, 'QueueHost', 'ampq://0.0.0.0:5672')
+			CommandQueue = trySet(data, 'CommandQueue', 'modbus_commands')
+			EventQueue = trySet(data, 'EventQueue', 'modbus_events')
+			LogQueue = trySet(data, 'LogQueue', 'log_queue')
+	except Exception as error:
+		logger.warning(' [Warn] Unable to open webapp.config, using defaults...\n\tError: ' + str(error))
 
 def openQueue(name):
     connection = pika.BlockingConnection(
@@ -82,19 +95,19 @@ def publishToQueue(queueName, msg):
 		# when the node is stopped cleanly
 		#
 		# break
-		app.logger.error(' [Error] Connection closed by broker')
+		logger.error(' [Error] Connection closed by broker')
 
 	# Do not recover on channel errors
 	except pika.exceptions.AMQPChannelError as err:
-		app.logger.error(" [Error] Caught a channel error: {}, stopping...".format(err))
+		logger.error(" [Error] Caught a channel error: {}, stopping...".format(err))
 
 	# Recover on all other connection errors
 	except pika.exceptions.AMQPConnectionError:
-		app.logger.error(" [Error] Connection was closed, retrying...")
+		logger.error(" [Error] Connection was closed, retrying...")
 
 	# Write whatever was thrown
 	except Exception as error:
-		app.logger.error(" [Error] Catched exception: " + str(error))
+		logger.error(" [Error] Catched exception: " + str(error))
 
 ########################################################
 # Definitions of all methods which can be run on server
@@ -115,6 +128,7 @@ def index():
 
 	# put all widget data into page data dictionary
 	data['widgets'] = datastorage.get_widgets()
+	data['types'] = datastorage.get_widget_types()
 
 	# Render index page
 	return render_template('index.html', title='Modbus', data = data)
@@ -162,12 +176,15 @@ def set_ip():
 	# Redirect to modbus connection test
 	return redirect(url_for('test_connection'))
 
-# Toggle widget - POST utility method, called when user wants to toggle widget on/off
-# saves status to database, redirects to 'Index'
-@app.route("/toggle_widget", methods=['GET', 'POST'])
-def toggle_widget():
+# Set data - POST utility method, called when user wants to change widget data
+# saves data to database, redirects to 'Index'
+@app.route("/set_data", methods=['GET', 'POST'])
+def set_temp():
 	# Get widget id from form
 	widget_id = request.args.get('widget_id', 0)
+	data_float_0 = request.args.get('data_float_0', 0)
+	data_float_1 = request.args.get('data_float_1', 0)
+
 	if not widget_id:
 		# If theres no widget id in form, return error and redirect to index
 		print("Error: toggle_widget: no widget_id in form!")
@@ -179,19 +196,48 @@ def toggle_widget():
 	cur.execute ('SELECT * FROM widgets WHERE id == ?', [widget_id])
 	widgets = cur.fetchone()
 
-	# Get widget status
-	status = widgets['status']
-	print ("Status of '" + widgets['name'] + "'" + str(status) + "'!")
+	# Update widget data in database
+	if data_float_0:
+		cur.execute ('UPDATE widgets SET data_float_0 = ? WHERE id == ?', [data_float_0, widget_id])
+		print ("Changed data_float_0 of '" + widgets['name'] + "' to '" + str(data_float_0) + "'!")
 
-	# Toggle status itself
-	if status == 0:
-		status = 1
-	else:
-		status = 0
+	if data_float_1:
+		cur.execute ('UPDATE widgets SET data_float_1 = ? WHERE id == ?', [data_float_1, widget_id])
+		print ("Changed data_float_1 of '" + widgets['name'] + "' to '" + str(data_float_1) + "'!")
+
+	send_widgets_via_modbus()
+
+	# Close database connection
+	db_context.commit()
+	db_context.close()
+
+	# Redirect to index
+	return redirect(url_for("index"))
+
+# Set status - POST utility method, called when user wants to change statsu, egx. widget on/off
+# saves status to database, redirects to 'Index'
+@app.route("/set_status", methods=['GET', 'POST'])
+def toggle_widget():
+	# Get widget id from form
+	widget_id = request.args.get('widget_id', 0)
+	status_id = request.args.get('Toggle', 0)
+
+	if not widget_id:
+		# If theres no widget id in form, return error and redirect to index
+		print("Error: toggle_widget: no widget_id in form!")
+		return redirect(url_for("index"))
+
+	# Get widget by id from database
+	db_context = db.get_db()
+	cur = db_context.cursor()
+	cur.execute ('SELECT * FROM widgets WHERE id == ?', [widget_id])
+	widgets = cur.fetchone()
 
 	# Update widget status in database
-	cur.execute ('UPDATE widgets SET status = ? WHERE id == ?', [status, widget_id])
-	print ("Changed status of '" + widgets['name'] + "' to '" + str(status) + "'!")
+	cur.execute ('UPDATE widgets SET status = ? WHERE id == ?', [status_id, widget_id])
+	print ("Changed status of '" + widgets['name'] + "' to '" + str(status_id) + "'!")
+
+	send_widgets_via_modbus()
 
 	# Close database connection
 	db_context.commit()
@@ -217,6 +263,7 @@ def edit_widget():
 
 	data = {'title':'Edit'}
 	data['widget'] = cur.fetchone()
+	data['types'] = datastorage.get_widget_types()
 
 	# Render edit_widget page
 	return render_template('edit_widget.html', title="Edit widget", data=data, widget=data['widget'])
@@ -229,6 +276,7 @@ def add_widget():
 	else:
 		data = {'title':'Add'}
 		data['widget'] = {'name':'New widget', 'type':'1', 'img':''}
+		data['types'] = datastorage.get_widget_types()
 		return render_template('add_widget.html', title="Add widget", data=data, widget=data['widget'])
 
 # Post edit - utility method, called by widget edit or creation page
@@ -237,7 +285,7 @@ def add_widget():
 def post_edit():
 	# Dispath by 'Submit' to decide what to do next
 	if 'Submit' in request.args:
-		app.logger.warning("Submit: " + request.args['Submit'])
+		logger.warning("Submit: " + request.args['Submit'])
 		if request.args['Submit'] == 'Commit':
 			add_new_widget()
 		elif request.args['Submit'] == 'Update':
@@ -249,8 +297,26 @@ def post_edit():
 			if widget_id:
 				delete_widget(widget_id)
 	else:
-		app.logger.error("No Submit!")
+		logger.error("No Submit!")
 	return redirect(url_for('index'))
+
+@app.route('/show_log', methods=['GET', 'POST'])
+def show_log():
+	try:
+		q, ch, cnn = openQueue(LogQueue)
+		for method, properties, rawData in ch.consume(queue=CommandQueue):
+			body = rawData.decode("utf-8")
+			logger.info(body)
+	except Exception as error:
+		logger.error("Unable to open queue " + LogQueue)
+
+	render = ''
+	with open(log_path,'r') as log_file:
+		data = log_file.read().split('\n')
+		for line in data:
+			render += ('<p>' + line)
+
+	return render
 
 # Update widget - method which simplifies updating widget in database
 def update_widget(id):
@@ -288,7 +354,7 @@ def delete_widget(id):
 @app.route("/view_data")
 def view_data():
 	send_widgets_via_modbus()
-	return "Check log"
+	return redirect(url_for('show_log'))
 
 # Send widgets via modbus - utility method for modbus packet creation
 def send_widgets_via_modbus():
@@ -301,8 +367,18 @@ def send_widgets_via_modbus():
 
 	temp_array = []
 	for widget in temp_widgets:
-		temp_array.append({'status':widget['status']})
-	
+		type_id = widget['type']
+		if type_id == 1 or type_id == 3: # Simple status for Light and Blinders
+			temp_array.append({
+				'status':widget['status'],
+				'byte':widget['modbus_write_0']
+			})
+		elif type_id == 2 or type_id == 4: # Value for Temperature and Alarm
+			temp_array.append({
+				'value':widget['data_float_0'],
+				'byte':widget['modbus_write_0']
+			})
+
 	data['widgets'] = temp_array
 
 	body = json.dumps(data)

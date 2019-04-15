@@ -16,25 +16,58 @@
                     {% for widget in data.widgets %}
                     <div class="col-sm-6 col-md-4">
                         <div class="thumbnail">
+
                             {% if widget.img %}
                             <img src={{widget.img}} alt={{widget.name}}>
                             {% else %}
                             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHHcYRG05BOuIvUisgGh8TNm0hH4_71YU7DRvGPR1v3cvVLBkl" alt={{widget.name}}>
                             {% endif %}
+
                             <div class="caption">
-                            <form action="/toggle_widget">
-                                <h3>{{widget.name}}</h3>
-                                <input type="hidden" value="{{widget.id}}" name="widget_id" />
-                                <div class="btn-group btn-toggle">
-                                {% if widget.status %}
-                                    <button type="submit" name="Toggle" class="btn btn-sm btn-default active">ON</button>
-                                    <button type="submit" name="Toggle" class="btn btn-sm btn-primary">OFF</button>
-                                {% else %}
-                                    <button type="submit" name="Toggle" class="btn btn-sm btn-primary">ON</button>
-                                    <button type="submit" name="Toggle" class="btn btn-sm btn-default active">OFF</button>
-                                {% endif %}
-                                </div>
-                            </form>
+                            <h3>{{widget.name}}</h3>
+                            <h4>{{ data.types[widget.type-1].name }}</h4>
+
+                            {% if widget.type == 1 %}
+                                <form action="/set_status">
+                                    <input type="hidden" value="{{widget.id}}" name="widget_id" />
+                                    <div class="btn-group btn-toggle">
+                                    {% set labels=["OFF","ON","MOTION","ILUMINANCE"] %}
+                                    {% for x in range(4) %}
+                                        <button value="{{x}}" type="submit" name="Toggle" class="btn btn-sm {% if widget.status == x %} btn-default active {% else %} btn-primary {% endif %}">{{labels[x]}}</button>
+                                    {% endfor %}
+                                    </div>
+                                </form>
+                            {% elif widget.type == 2 %}
+                                <form action="/set_data">
+                                    <input type="hidden" value="{{widget.id}}" name="widget_id" />
+                                    <div class="btn-group btn-toggle">
+                                        <button type="submit" name="Toggle" class="btn btn-sm btn-primary">SET</button>
+                                    </div>
+                                    <input class="col-sm-5" type="number" value="{{widget.data_float_0}}" name="data_float_0" disabled>
+                                    <input class="col-sm-5" type="number" value="{{widget.data_float_1}}" name="data_float_1">
+                                </form>
+                            {% elif widget.type == 3 %}
+                                <form action="/set_status">
+                                    <input type="hidden" value="{{widget.id}}" name="widget_id" />
+                                    <div class="btn-group btn-toggle">
+                                    {% set labels=["UP","DOWN"] %}
+                                    {% for x in range(2) %}
+                                        <button value="{{x}}" type="submit" name="Toggle" class="btn btn-sm {% if widget.status == x %} btn-default active {% else %} btn-primary {% endif %}">{{labels[x]}}</button>
+                                    {% endfor %}
+                                    </div>
+                                </form>
+                            {% elif widget.type == 4 %}
+                                <form action="/set_data">
+                                    <input type="hidden" value="{{widget.id}}" name="widget_id" />
+                                    <div class="btn-group btn-toggle">
+                                        <button type="submit" name="Toggle" class="btn btn-sm btn-primary">SET</button>
+                                    </div>
+                                    <input type="text" value="0000" name="data_float_0">
+                                </form>
+                            {% else %}
+                                <div>Unsupported widget type!</div>
+                            {% endif %}
+
                             <form action="edit_widget">
                                 <input type="hidden" value="{{widget.id}}" name="widget_id" />
                                 <button type="submit" class="btn btn-sm btn-info">Edit</button>
@@ -42,6 +75,7 @@
                             </div>
                         </div>
                     </div>
+
                     {% else %}
                         <h2>Well, there are no widgets here today. Just me...</h2>
                     {% endfor %}
@@ -55,50 +89,6 @@
                             </form>
                         </div>
                     </div>
-
-                    <!-- <div class="col-sm-6 col-md-4">
-                        <div class="thumbnail">
-                        <img src="https://www.domondo.pl/media/image/19/9a/b5/gotowa-aluzja-kremowa-widok_1_725x725.png" alt="...">
-                        <div class="caption">
-                            <h3>Zaluzje</h3>
-                            <p>Sterownanie zaluzjami.</p>
-                            <p>Status: zasolniete</p>
-                            <p><a href="#" class="btn btn-default" role="button">Odslon</a></p>
-                        </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-4">
-                            <div class="thumbnail">
-                            <img src="https://sklep.auroks.pl/environment/cache/images/500_500_productGfx_3d1a04f1e6026021647d82bc0fab9961.jpg" alt="...">
-                            <div class="caption">
-                                <h3>Ogrzewanie</h3>
-                                <p>Sterowanie temperatura w pomieszczeniu.</p>
-                                <p>Status: wlaczone, 21°C</p>
-                                <p><a href="#" class="btn btn-primary" role="button">Zmien temperature</a> <a href="#" class="btn btn-default" role="button">Wylacz</a></p>
-                            </div>
-                            </div>
-                    </div>
-                    <div class="col-sm-6 col-md-4">
-                            <div class="thumbnail">
-                            <img src="https://www.atat.pl/2745-large_default/%C5%BCar%C3%B3wka-halogenowa-e27-42-w-630-lm-2800-k-philips-ecoclassic.jpg" alt="...">
-                            <div class="caption">
-                                <h3>Oswietlenie</h3>
-                                <p>Sterowanie oswielteniem.</p>
-                                <p>Status: wlaczone</p>
-                                <p><a href="#" class="btn btn-default" role="button">Wylacz</a></p>
-                            </div>
-                            </div>
-                    </div>
-                    <div class="col-sm-6 col-md-4">
-                            <div class="thumbnail">
-                            <div class="caption">
-                                <h3>Nowe</h3>
-                                <p>Podepnij nowe urzadzenie...</p>
-                                <p><a href="#" class="btn btn-primary" role="button">Dodaj...</a></p>
-                            </div>
-                            </div>
-                    </div>                  
-                </div> -->
         </div>
 </div>
 {% endblock %}

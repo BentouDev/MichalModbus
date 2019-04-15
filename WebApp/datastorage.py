@@ -1,5 +1,18 @@
 import db as db
 
+def get_widget_types():
+    result = [
+        {"name":"Light"},
+        {"name":"Temperature"},
+        {"name":"Blinders"},
+        {"name":"Alarm"},
+    ]
+
+    for x in range(len(result)):
+        result[x]['id'] = x + 1
+
+    return result
+
 def get_server_data():
     db_context = db.get_db()
     cur = db_context.cursor()

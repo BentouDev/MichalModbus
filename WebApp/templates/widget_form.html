@@ -7,8 +7,9 @@
     <input type="text" value="{{widget.name}}" name="name">
     <h3>Type:</h3>
     <select name="type" value="{{widget.type}}">
-        <option value="1">Switch</option>
-        <option value="2">Float</option>
+        {% for x in data.types %}
+            <option value="{{x.id}}" {% if x.id == widget.type %} selected {% endif %}>{{x.name}}</option>
+        {% endfor %}
     </select>
     <h1>Image:</h1>
     <input type="text" value="{{widget.img}}" name="img">
