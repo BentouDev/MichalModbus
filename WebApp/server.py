@@ -84,7 +84,7 @@ def closeQueue(ch, cnn):
 
 def publishToQueue(queueName, msg):
 	try:
-		print(' [DEBUG] Publishing to queue ' + queueName)
+		logger.info(' [DEBUG] Publishing to queue ' + queueName)
 		q, ch, cnn = openQueue(queueName)
 		ch.basic_publish(exchange='', routing_key=queueName, body=msg)
 		closeQueue(ch, cnn)
@@ -168,7 +168,7 @@ def change_ip():
 def set_ip():
 	# Try get address from page form
 	address = request.args.get('address')
-	print("Got address " + address)
+	logger.info(" [Info] Got address " + address)
 	if address:
 		# If address was present in form, save it to database!
 		datastorage.set_address(address)
@@ -187,7 +187,7 @@ def set_temp():
 
 	if not widget_id:
 		# If theres no widget id in form, return error and redirect to index
-		print("Error: toggle_widget: no widget_id in form!")
+		logger.error(" [Error] toggle_widget: no widget_id in form!")
 		return redirect(url_for("index"))
 
 	# Get widget by id from database
@@ -199,11 +199,11 @@ def set_temp():
 	# Update widget data in database
 	if data_float_0:
 		cur.execute ('UPDATE widgets SET data_float_0 = ? WHERE id == ?', [data_float_0, widget_id])
-		print ("Changed data_float_0 of '" + widgets['name'] + "' to '" + str(data_float_0) + "'!")
+		logger.info (" [Info] Changed data_float_0 of '" + widgets['name'] + "' to '" + str(data_float_0) + "'!")
 
 	if data_float_1:
 		cur.execute ('UPDATE widgets SET data_float_1 = ? WHERE id == ?', [data_float_1, widget_id])
-		print ("Changed data_float_1 of '" + widgets['name'] + "' to '" + str(data_float_1) + "'!")
+		logger.info (" [Info] Changed data_float_1 of '" + widgets['name'] + "' to '" + str(data_float_1) + "'!")
 
 	send_widgets_via_modbus()
 
@@ -224,7 +224,7 @@ def toggle_widget():
 
 	if not widget_id:
 		# If theres no widget id in form, return error and redirect to index
-		print("Error: toggle_widget: no widget_id in form!")
+		logger.error (" [Error] toggle_widget: no widget_id in form!")
 		return redirect(url_for("index"))
 
 	# Get widget by id from database
@@ -235,7 +235,7 @@ def toggle_widget():
 
 	# Update widget status in database
 	cur.execute ('UPDATE widgets SET status = ? WHERE id == ?', [status_id, widget_id])
-	print ("Changed status of '" + widgets['name'] + "' to '" + str(status_id) + "'!")
+	logger.info (" [Info] Changed status of '" + widgets['name'] + "' to '" + str(status_id) + "'!")
 
 	send_widgets_via_modbus()
 
@@ -253,7 +253,7 @@ def edit_widget():
 	widget_id = request.args.get('widget_id', 0)
 	if not widget_id:
 		# If theres no widget id in form, return error and redirect to index
-		print("Error: edit_widget: no widget_id in form!")
+		logger.error (" [Error] edit_widget: no widget_id in form!")
 		return redirect(url_for("index"))
 
 	# Get widget by id from database
@@ -285,7 +285,7 @@ def add_widget():
 def post_edit():
 	# Dispath by 'Submit' to decide what to do next
 	if 'Submit' in request.args:
-		logger.warning("Submit: " + request.args['Submit'])
+		logger.warning(" [Warn] Submit: " + request.args['Submit'])
 		if request.args['Submit'] == 'Commit':
 			add_new_widget()
 		elif request.args['Submit'] == 'Update':
@@ -297,7 +297,7 @@ def post_edit():
 			if widget_id:
 				delete_widget(widget_id)
 	else:
-		logger.error("No Submit!")
+		logger.error(" [Error] No Submit!")
 	return redirect(url_for('index'))
 
 @app.route('/show_log', methods=['GET', 'POST'])
@@ -308,7 +308,7 @@ def show_log():
 			body = rawData.decode("utf-8")
 			logger.info(body)
 	except Exception as error:
-		logger.error("Unable to open queue " + LogQueue)
+		logger.error(" [Error] Unable to open queue " + LogQueue)
 
 	render = ''
 	with open(log_path,'r') as log_file:
@@ -324,10 +324,16 @@ def update_widget(id):
 	type_id = request.args.get("type")
 	img = request.args.get("img")
 
+	modbus_write_0 = request.args.get("modbus_write_0")
+	modbus_read_0 = request.args.get("modbus_reader_0")
+
 	# Update existing widget by id in database
 	db_context = db.get_db()
 	cur = db_context.cursor()
-	cur.execute ('UPDATE widgets SET name = ?, type = ?, img = ? WHERE id == ?', [name, type_id, img, id])
+	cur.execute (
+		'UPDATE widgets SET name = ?, type = ?, img = ?, modbus_write_0 = ?, modbus_read_0 = ? WHERE id == ?', 
+		[name, type_id, img, id, modbus_write_0, modbus_read_0])
+
 	db_context.commit()
 
 # Add widget - method which simplifies creation of widget in database
@@ -371,12 +377,13 @@ def send_widgets_via_modbus():
 		if type_id == 1 or type_id == 3: # Simple status for Light and Blinders
 			temp_array.append({
 				'status':widget['status'],
-				'byte':widget['modbus_write_0']
+				'byte_write':widget['modbus_write_0']
 			})
 		elif type_id == 2 or type_id == 4: # Value for Temperature and Alarm
 			temp_array.append({
 				'value':widget['data_float_0'],
-				'byte':widget['modbus_write_0']
+				'byte_write':widget['modbus_write_0'],
+				'byte_read':widget['modbus_read_0']
 			})
 
 	data['widgets'] = temp_array

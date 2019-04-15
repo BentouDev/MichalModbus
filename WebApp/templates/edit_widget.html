@@ -3,6 +3,15 @@
 {% block content %}
 {{ super() }}
 <div class = "container">
+    <h3>Modbus: </h2>
+    <div class="row">
+        <h4 class="col-sm-1">Registers</h4>
+        <div class="col-sm-2">Write (MW)<input form="widget" value="{{widget.modbus_write_0}}" name="modbus_write_0"></div>
+        <div class="col-sm-2">Read (MW)<input form="widget" value="{{widget.modbus_read_0}}" name="modbus_read_0"></div>
+    </div>
+</div>
+<div class = "container">
+    <div class="col-sm2"> Action </div>
     <button form="widget" class="btn btn-default" type="submit" name="Submit" value="Cancel">Cancel</button>
     <button form="widget" class="btn btn-danger" type="submit" name="Submit" value="Delete">Delete</button>
     <button form="widget" class="btn btn-success" type="submit" name="Submit" value="Update" value="Commit">Save</button>
