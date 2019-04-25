@@ -133,7 +133,7 @@ def send_to_modbus(widgets):
                     sendLog(' [error] null data [state] for type [4]')
 
                 if ok(id_pin) and ok(pin):
-                    DINGUS.set_float(int(id_pin), int(pin))
+                    DINGUS.set_byte(int(id_pin), int(pin))
                 else:
                     sendLog(' [error] null data [data_float_0] for type [4]')
 
