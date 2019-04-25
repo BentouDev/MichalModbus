@@ -8,11 +8,10 @@ rabbitmq:
     - "./rabbitmq_plugins:/etc/rabbitmq/enabled_plugins"
     - "./WebApp/data.sqlite:/app/data.sqlite"
    # - "./rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro"
-ModbusServer:
+modbus:
   #image: bentou/michalmodbus
-  build: ./webapp
+  build: ./WebApp
   ports:
     - 80:5000
   volumes:
     - "./webapp.config:/app/webapp.config"
-
