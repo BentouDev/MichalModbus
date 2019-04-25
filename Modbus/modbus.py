@@ -48,6 +48,6 @@ class TwojStary:
 			i = i + 1
 
 	def set_byte(self, id, value):
-		print (' [debug] attempt to set register [' + id + '] to ' + value)
+		print (' [debug] attempt to set register [' + str(id) + '] to ' + str(value))
 		self.ensure_cache(id)
 		self.REGISTER_CACHE[id] = value # Set as it is
