@@ -42,10 +42,12 @@ class TwojStary:
 		self.ensure_cache(id + 4)
 
 		encoded_float = struct.pack('f', value)
-
-		for i in range(4):
-			self.REGISTER_CACHE[id + i] = encoded_float[i]
-			i = i + 1
+		if len(encoded_float) < 4:
+			print (' [error] Float byte format failed for: ' + value)
+		else:
+			for i in range(4):
+				self.REGISTER_CACHE[id + i] = encoded_float[i]
+				i = i + 1
 
 	def set_byte(self, id, value):
 		self.ensure_cache(id)
