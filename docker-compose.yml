@@ -14,4 +14,6 @@ ModbusServer:
     - 80:5000
   volumes:
     - "./webapp.config:/app/webapp.config"
+  build:
+    - ./WebApp
 
