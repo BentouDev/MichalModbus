@@ -96,6 +96,7 @@ def send_to_modbus(widgets):
 
         for widget in widgets:
             sendLog(' [KURWA] :3 ' + str(widget))
+            type = widget['type']
             if type == 1 or type == 3: #
                 state = widget['state']
                 regid = widget['modbus_write_0'] 
