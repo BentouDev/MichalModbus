@@ -89,7 +89,6 @@ def ok(value):
     return value != None and value != ""
 
 def send_to_modbus(widgets):
-    sendLog(' [KURWA] :^)')
     try:
         # Connect to modbus
         DINGUS.aquire_modbus(ModbusAddress)
