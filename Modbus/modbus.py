@@ -24,7 +24,7 @@ def get_modbus(address):
 def send(modbus, UNIT):
 	global REGISTER_CACHE
 
-	print(" [Debug] raw modbus packet " + REGISTER_CACHE)
+	print(" [Debug] raw modbus packet " + str(REGISTER_CACHE))
 
 	rr = modbus.write_registers(0x0, REGISTER_CACHE, unit=UNIT)
 	modbus.close()
@@ -46,7 +46,7 @@ def set_float(id, value):
 		i = i + 1
 
 def set_byte(id, value):
+	print (' [debug] attempt to set register [' + id + '] to ' + value)
 	global REGISTER_CACHE
 	ensure_cache(id)
 	REGISTER_CACHE[id] = value # Set as it is
-	print (' [debug] set register [' + id + '] to ' + value)
