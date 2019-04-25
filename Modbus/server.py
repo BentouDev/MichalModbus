@@ -11,10 +11,10 @@ import modbus as sm
 import logging
 # FORMAT = ('%(asctime)-15s %(threadName)-15s '
 #           '%(levelname)-8s %(module)-15s:%(lineno)-8s %(message)s')
-FORMAT = ('%(message)s')
-logging.basicConfig(format=FORMAT)
-log = logging.getLogger()
-log.setLevel(logging.DEBUG)
+# FORMAT = ('%(message)s')
+# logging.basicConfig(format=FORMAT)
+# log = logging.getLogger()
+# log.setLevel(logging.DEBUG)
 
 # Predeclare global variables
 UNIT = 0x0
@@ -99,7 +99,7 @@ def send_to_modbus(widgets):
                 if ok(regid) and ok(state):
                     sm.set_byte(regid, state)
                 else:
-                    print(' [error] null data [state] for type [1,3]')
+                    sendLog(' [error] null data [state] for type [1,3]')
 
             if type == 2:
                 state = widget['state']
@@ -110,12 +110,12 @@ def send_to_modbus(widgets):
                 if ok(id_state) and ok(state):
                     sm.set_byte(id_state, state)
                 else:
-                    print(' [error] null data [state] for type [2]')
+                    sendLog(' [error] null data [state] for type [2]')
 
                 if ok(id_float) and ok(data_float_0):
                     sm.set_float(id_float, float(data_float_0))
                 else:
-                    print(' [error] null data [data_float_0] for type [2]')
+                    sendLog(' [error] null data [data_float_0] for type [2]')
 
             if type == 4:
                 state = widget['data_float_0']
@@ -124,7 +124,7 @@ def send_to_modbus(widgets):
                 if ok(regid) and ok(state):
                     sm.set_byte(regid, state)
                 else:
-                    print(' [error] null data [data_float_0] for type [4]')
+                    sendLog(' [error] null data [data_float_0] for type [4]')
 
         sendLog(" [Info] sending data to modbus at " + ModbusAddress + "...")
         rr = sm.send(modbus, UNIT)
