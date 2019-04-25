@@ -1,16 +1,6 @@
 from pymodbus.client.sync import ModbusTcpClient as ModbusClient
 import numpy, struct
 
-REGISTER_CACHE = [0x0]*10
-
-def kurwa_resize(array, size):
-	if len(array) < size:
-		return array
-	result = [0x0]*size
-	for i in len(array):
-		result[i] = array[i]
-	return result
-
 def get_modbus(address):
 	if not address:
 		raise Exception("Unable to connect to modbus when no address!")
@@ -21,32 +11,43 @@ def get_modbus(address):
 		return modbus
 	return None
 
-def send(modbus, UNIT):
-	global REGISTER_CACHE
+class TwojStary:
+	REGISTER_CACHE = [0x0]*10
+	client = None
 
-	print(" [Debug] raw modbus packet " + str(REGISTER_CACHE))
+	def kurwa_resize(self, size):
+		if len(self.REGISTER_CACHE) < size:
+			return self.REGISTER_CACHE
+		result = [0x0]*size
+		for i in len(self.REGISTER_CACHE):
+			result[i] = self.REGISTER_CACHE[i]
+		return result
 
-	rr = modbus.write_registers(0x0, REGISTER_CACHE, unit=UNIT)
-	modbus.close()
-	return rr
+	def aquire_modbus(self, address):
+		self.client = get_modbus(address)
 
-def ensure_cache(id):
-	global REGISTER_CACHE
-	if id > len(REGISTER_CACHE):
-		REGISTER_CACHE = kurwa_resize(REGISTER_CACHE, id)
+	def send(self, UNIT):
+		print(" [Debug] raw modbus packet " + str(self.REGISTER_CACHE))
 
-def set_float(id, value):
-	global REGISTER_CACHE
-	ensure_cache(id + 4)
+		rr = self.client.write_registers(0x0, self.REGISTER_CACHE, unit=UNIT)
+		self.client.close()
+		self.client = None
+		return rr
 
-	encoded_float = struct.pack('f', value)
+	def ensure_cache(self, id):
+		if id > len(self.REGISTER_CACHE):
+			self.REGISTER_CACHE = self.kurwa_resize(id)
 
-	for i in range(4):
-		REGISTER_CACHE[id + i] = encoded_float[i]
-		i = i + 1
+	def set_float(self, id, value):
+		self.ensure_cache(id + 4)
 
-def set_byte(id, value):
-	print (' [debug] attempt to set register [' + id + '] to ' + value)
-	global REGISTER_CACHE
-	ensure_cache(id)
-	REGISTER_CACHE[id] = value # Set as it is
+		encoded_float = struct.pack('f', value)
+
+		for i in range(4):
+			self.REGISTER_CACHE[id + i] = encoded_float[i]
+			i = i + 1
+
+	def set_byte(self, id, value):
+		print (' [debug] attempt to set register [' + id + '] to ' + value)
+		self.ensure_cache(id)
+		self.REGISTER_CACHE[id] = value # Set as it is
