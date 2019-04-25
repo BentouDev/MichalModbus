@@ -27,7 +27,7 @@ class TwojStary:
 		if len(self.REGISTER_CACHE) > size:
 			return self.REGISTER_CACHE
 		result = [0x0]*(size+1)
-		for i in len(self.REGISTER_CACHE):
+		for i in range(len(self.REGISTER_CACHE)):
 			result[i] = self.REGISTER_CACHE[i]
 		return result
 
