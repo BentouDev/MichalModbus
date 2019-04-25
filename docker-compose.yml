@@ -11,6 +11,7 @@ rabbitmq:
 ModbusServer:
   #image: bentou/michalmodbus
   build: ./WebApp
+  image: webapp
   ports:
     - 80:5000
   volumes:
