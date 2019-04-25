@@ -9,7 +9,7 @@ rabbitmq:
     - "./WebApp/data.sqlite:/app/data.sqlite"
    # - "./rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro"
 ModbusServer:
-  image: bentou/michalmodbus
+  # image: bentou/michalmodbus
   ports:
     - 80:5000
   volumes:
