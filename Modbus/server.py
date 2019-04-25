@@ -107,7 +107,7 @@ def send_to_modbus(widgets):
 
             if type == 2:
                 state = widget['status']
-                data_float_0 = widget['data_float_0']
+                data_float_0 = widget['data_float_1']
                 id_state = widget['modbus_write_0']
                 id_float = widget['modbus_write_1']
 
