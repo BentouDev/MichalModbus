@@ -92,7 +92,7 @@ def send_to_modbus(widgets):
     sendLog(' [KURWA] :^)')
     try:
         # Connect to modbus
-        DINGUS.aquire_modbus(address)
+        DINGUS.aquire_modbus(ModbusAddress)
 
         for widget in widgets:
             sendLog(' [KURWA] :3 ' + str(widget))
