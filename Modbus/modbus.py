@@ -24,7 +24,7 @@ class TwojStary:
 			self.client.close()
 
 	def resize_buffer(self, size):
-		if len(self.REGISTER_CACHE) < size:
+		if len(self.REGISTER_CACHE) > size:
 			return self.REGISTER_CACHE
 		result = [0x0]*(size+1)
 		for i in len(self.REGISTER_CACHE):
