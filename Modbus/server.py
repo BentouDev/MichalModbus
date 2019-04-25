@@ -8,7 +8,7 @@ import pika
 import modbus as sm
 
 # Configure modbus client logging, so server prints out errors to server console
-import logging
+import logging, traceback
 # FORMAT = ('%(asctime)-15s %(threadName)-15s '
 #           '%(levelname)-8s %(module)-15s:%(lineno)-8s %(message)s')
 # FORMAT = ('%(message)s')
@@ -136,7 +136,8 @@ def send_to_modbus(widgets):
 
     except Exception as error:
         DINGUS.force_close()
-        sendLog(" [Error] Modbus ip: " + ModbusAddress + " error: " + str(error))
+        tb = traceback.format_exc()
+        sendLog(" [Error] Modbus ip: " + ModbusAddress + " error: " + str(error) + "\n" + tb)
 
 def legacy_send_to_modbus(widgets):
     try:

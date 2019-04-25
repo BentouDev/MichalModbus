@@ -23,7 +23,7 @@ class TwojStary:
 		if self.client != None:
 			self.client.close()
 
-	def kurwa_resize(self, size):
+	def resize_buffer(self, size):
 		if len(self.REGISTER_CACHE) < size:
 			return self.REGISTER_CACHE
 		result = [0x0]*(size+1)
@@ -44,7 +44,7 @@ class TwojStary:
 
 	def ensure_cache(self, id):
 		if id > len(self.REGISTER_CACHE):
-			self.REGISTER_CACHE = self.kurwa_resize(id)
+			self.REGISTER_CACHE = self.resize_buffer(id)
 
 	def set_float(self, id, value):
 		self.ensure_cache(id + 4)
