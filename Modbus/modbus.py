@@ -1,7 +1,7 @@
 from pymodbus.client.sync import ModbusTcpClient as ModbusClient
 import numpy, struct
 
-REGISTER_CACHE = numpy.ndarray([1])
+REGISTER_CACHE = numpy.ndarray([1], dtype=int)
 
 def get_modbus(address):
 	if not address:
