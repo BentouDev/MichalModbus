@@ -134,6 +134,7 @@ def send_to_modbus(widgets):
         return rr
 
     except Exception as error:
+        DINGUS.force_close()
         sendLog(" [Error] Modbus ip: " + ModbusAddress + " error: " + str(error))
 
 def legacy_send_to_modbus(widgets):

@@ -333,7 +333,7 @@ def update_widget(id):
 
 	modbus_write_0 = request.args.get("modbus_write_0")
 	modbus_write_1 = request.args.get("modbus_write_1")
-	modbus_read_0 = request.args.get("modbus_reader_0")
+	modbus_read_0 = request.args.get("modbus_read_0")
 
 	base_cmd = 'UPDATE widgets SET name = ?, type = ?, img = ?'
 	base_data = [name, type_id, img]
