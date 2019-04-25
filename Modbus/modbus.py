@@ -15,7 +15,7 @@ class TwojStary:
 	REGISTER_CACHE = [0x0]*10
 	client = None
 
-	def kurwa_resize(self, new_size):
+	def kurwa_resize(self, size):
 		if len(self.REGISTER_CACHE) < size:
 			return self.REGISTER_CACHE
 		result = [0x0]*(size+1)
