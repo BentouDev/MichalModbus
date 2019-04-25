@@ -1,7 +1,7 @@
 from pymodbus.client.sync import ModbusTcpClient as ModbusClient
 import numpy, struct
 
-REGISTER_CACHE = numpy.array((1,1))
+REGISTER_CACHE = numpy.ndarray([1])
 
 def get_modbus(address):
 	if not address:
@@ -29,7 +29,7 @@ def send(modbus, UNIT):
 def ensure_cache(id):
 	global REGISTER_CACHE
 	if id > len(REGISTER_CACHE):
-		numpy.resize(REGISTER_CACHE, (1,id))
+		REGISTER_CACHE.resize(id)
 
 def set_float(id, value):
 	global REGISTER_CACHE
