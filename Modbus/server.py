@@ -86,7 +86,7 @@ def modbus_ping():
         sendLog(" [Error] Modbus ip: " + ModbusAddress + " error: " + str(error))
 
 def ok(value):
-    return value != None and value != ""
+    return value != None and value != "" and value != 'None'
 
 def send_to_modbus(widgets):
     try:
