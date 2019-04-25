@@ -1,7 +1,15 @@
 from pymodbus.client.sync import ModbusTcpClient as ModbusClient
 import numpy, struct
 
-REGISTER_CACHE = numpy.ndarray([1], dtype=int)
+REGISTER_CACHE = [0x0]*10
+
+def kurwa_resize(array, size):
+	if len(array) < size:
+		return array
+	result = [0x0]*size
+	for i in len(array):
+		result[i] = array[i]
+	return result
 
 def get_modbus(address):
 	if not address:
@@ -25,7 +33,7 @@ def send(modbus, UNIT):
 def ensure_cache(id):
 	global REGISTER_CACHE
 	if id > len(REGISTER_CACHE):
-		REGISTER_CACHE.resize(id)
+		REGISTER_CACHE = kurwa_resize(REGISTER_CACHE, id)
 
 def set_float(id, value):
 	global REGISTER_CACHE
