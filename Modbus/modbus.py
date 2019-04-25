@@ -55,7 +55,7 @@ class TwojStary:
 		if len(encoded_float) < 4:
 			print (' [error] Float byte format failed for: ' + str(value))
 		else:
-			print ( ' [info] Packed float: ' + encoded_float)
+			print ( ' [info] Packed float: ' + str(encoded_float))
 			decoded_float = struct.unpack('hh', encoded_float) # as two shorts
 			for i in range(2):
 				self.REGISTER_CACHE[id + i] = decoded_float[i]
