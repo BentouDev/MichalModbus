@@ -4,7 +4,6 @@
 $ python3 -m pip install flask flask-jsonpify flask-sqlalchemy flask-restful
 $ python3 -m pip install flask-bootstrap
 $ python3 -m pip install pika
-$ python3 -m pip install numpy
 ```
 
 ### Modbus server
