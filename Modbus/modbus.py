@@ -43,7 +43,7 @@ class TwojStary:
 		return rr
 
 	def ensure_cache(self, id):
-		if id > len(self.REGISTER_CACHE):
+		if id >= len(self.REGISTER_CACHE):
 			self.REGISTER_CACHE = self.resize_buffer(id)
 
 	def set_float(self, id, value):
@@ -58,7 +58,7 @@ class TwojStary:
 				i = i + 1
 
 	def set_byte(self, id, value):
-		self.ensure_cache(id + 1)
+		self.ensure_cache(id)
 		if self.REGISTER_CACHE[id] != value:
 			print (' [debug] set register [' + str(id) + '] to ' + str(value))
 			self.REGISTER_CACHE[id] = value # Set as it is
