@@ -15,5 +15,5 @@ ModbusServer:
   volumes:
     - "./webapp.config:/app/webapp.config"
   build:
-    - ./WebApp
+    - "./WebApp"
 
