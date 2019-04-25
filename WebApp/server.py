@@ -418,6 +418,7 @@ def send_widgets_via_modbus():
 				'type':type_id,
 				'status':widget['status'],
 				'data_float_0':widget['data_float_0'],
+				'modbus_write_0':widget['modbus_write_0'],
 				'modbus_write_1':widget['modbus_write_1'],
 				'modbus_read_0':widget['modbus_read_0']
 			})
