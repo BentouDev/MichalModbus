@@ -126,7 +126,6 @@ def send_to_modbus(widgets):
                 else:
                     print(' [error] null data [data_float_0] for type [4]')
 
-        sendLog(" [Debug] raw modbus packet " + str(sm.REGISTER_CACHE))
         sendLog(" [Info] sending data to modbus at " + ModbusAddress + "...")
         rr = sm.send(modbus, UNIT)
         return rr
