@@ -72,7 +72,13 @@
                                 <form action="/set_data">
                                     <input type="hidden" value="{{widget.id}}" name="widget_id" />
                                     <div class="btn-group btn-toggle">
-                                        <button type="submit" name="Toggle" class="btn btn-sm btn-primary">SET</button>
+                                        {% set labels=["ON","OFF"] %}
+                                        {% for x in range(2) %}
+                                            <button value="{{x}}" type="submit" name="Toggle" class="btn btn-sm {% if widget.status == x %} btn-default active {% else %} btn-primary {% endif %}">{{labels[x]}}</button>
+                                        {% endfor %}
+                                        </div>
+                                    <div class="btn-group btn-toggle">
+                                        <button type="submit" name="Toggle" class="btn btn-sm btn-primary">CONFIRM PIN</button>
                                     </div>
                                     <input type="text" value="0000" name="data_float_0">
                                 </form>
