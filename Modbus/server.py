@@ -9,8 +9,9 @@ import modbus as sm
 
 # Configure modbus client logging, so server prints out errors to server console
 import logging
-FORMAT = ('%(asctime)-15s %(threadName)-15s '
-          '%(levelname)-8s %(module)-15s:%(lineno)-8s %(message)s')
+# FORMAT = ('%(asctime)-15s %(threadName)-15s '
+#           '%(levelname)-8s %(module)-15s:%(lineno)-8s %(message)s')
+FORMAT = ('%(message)s')
 logging.basicConfig(format=FORMAT)
 log = logging.getLogger()
 log.setLevel(logging.DEBUG)
@@ -82,6 +83,9 @@ def modbus_ping():
     except Exception as error:
         sendLog(" [Error] Modbus ip: " + ModbusAddress + " error: " + str(error))
 
+def ok(value):
+    return value != None and value != ""
+
 def send_to_modbus(widgets):
     try:
         # Connect to modbus
@@ -91,21 +95,38 @@ def send_to_modbus(widgets):
             if type == 1 or type == 3: #
                 state = widget['state']
                 regid = widget['modbus_write_0'] 
-                sm.set_byte(regid, state)
+                
+                if ok(regid) and ok(state):
+                    sm.set_byte(regid, state)
+                else:
+                    print(' [error] null data [state] for type [1,3]')
 
             if type == 2:
                 state = widget['state']
                 data_float_0 = widget['data_float_0']
                 id_state = widget['modbus_write_0']
                 id_float = widget['modbus_write_1']
-                sm.set_byte(id_state, state)
-                sm.set_float(id_float, data_float_0)
+
+                if ok(id_state) and ok(state):
+                    sm.set_byte(id_state, state)
+                else:
+                    print(' [error] null data [state] for type [2]')
+
+                if ok(id_float) and ok(data_float_0):
+                    sm.set_float(id_float, float(data_float_0))
+                else:
+                    print(' [error] null data [data_float_0] for type [2]')
 
             if type == 4:
                 state = widget['data_float_0']
-                regid = widget['modbus_write_0'] 
-                sm.set_byte(regid, state)
+                regid = widget['modbus_write_0']
 
+                if ok(regid) and ok(state):
+                    sm.set_byte(regid, state)
+                else:
+                    print(' [error] null data [data_float_0] for type [4]')
+
+        sendLog(" [Debug] raw modbus packet " + str(sm.REGISTER_CACHE))
         sendLog(" [Info] sending data to modbus at " + ModbusAddress + "...")
         rr = sm.send(modbus, UNIT)
         return rr
