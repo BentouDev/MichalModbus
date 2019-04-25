@@ -1,23 +1,24 @@
 ## Dependencies
 ### Flask webapp
-```sh
+```bash
 $ python3 -m pip install flask flask-jsonpify flask-sqlalchemy flask-restful
 $ python3 -m pip install flask-bootstrap
 $ python3 -m pip install pika
+$ python3 -m pip install numpy
 ```
 
 ### Modbus server
-```sh
+```bash
 $ python3 -m pip install pymodbus
 $ python3 -m pip install pika
 ```
 
 ## Run
 ### Web application
-```sh
+```bash
 python3 WebApp/server.py
 ```
 ### Modbus server
-```sh
+```bash
 python3 Modbus/server.py
 ```

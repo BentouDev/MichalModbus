@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-import time
-import json
+import time, json, numpy
 
 # RabbitMq
 import pika
@@ -10,11 +9,11 @@ import modbus as sm
 
 # Configure modbus client logging, so server prints out errors to server console
 import logging
-# FORMAT = ('%(asctime)-15s %(threadName)-15s '
-#           '%(levelname)-8s %(module)-15s:%(lineno)-8s %(message)s')
-# logging.basicConfig(format=FORMAT)
-# log = logging.getLogger()
-# log.setLevel(logging.DEBUG)
+FORMAT = ('%(asctime)-15s %(threadName)-15s '
+          '%(levelname)-8s %(module)-15s:%(lineno)-8s %(message)s')
+logging.basicConfig(format=FORMAT)
+log = logging.getLogger()
+log.setLevel(logging.DEBUG)
 
 # Predeclare global variables
 UNIT = 0x0
@@ -84,6 +83,37 @@ def modbus_ping():
         sendLog(" [Error] Modbus ip: " + ModbusAddress + " error: " + str(error))
 
 def send_to_modbus(widgets):
+    try:
+        # Connect to modbus
+        modbus = sm.get_modbus(ModbusAddress)
+
+        for widget in widgets:
+            if type == 1 or type == 3: #
+                state = widget['state']
+                regid = widget['modbus_write_0'] 
+                sm.set_byte(regid, state)
+
+            if type == 2:
+                state = widget['state']
+                data_float_0 = widget['data_float_0']
+                id_state = widget['modbus_write_0']
+                id_float = widget['modbus_write_1']
+                sm.set_byte(id_state, state)
+                sm.set_float(id_float, data_float_0)
+
+            if type == 4:
+                state = widget['data_float_0']
+                regid = widget['modbus_write_0'] 
+                sm.set_byte(regid, state)
+
+        sendLog(" [Info] sending data to modbus at " + ModbusAddress + "...")
+        rr = sm.send(modbus, UNIT)
+        return rr
+
+    except Exception as error:
+        sendLog(" [Error] Modbus ip: " + ModbusAddress + " error: " + str(error))
+
+def legacy_send_to_modbus(widgets):
     try:
         # Connect to modbus
         modbus = sm.get_modbus(ModbusAddress)
