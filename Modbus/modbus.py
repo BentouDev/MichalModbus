@@ -16,11 +16,7 @@ def get_modbus(address):
 def send(modbus, UNIT):
 	global REGISTER_CACHE
 
-	_print = ''
-	for x in REGISTER_CACHE:
-		_print = _print + ' ' + str(x)
-
-	print(" [Debug] raw modbus packet " + _print)
+	print(" [Debug] raw modbus packet " + REGISTER_CACHE)
 
 	rr = modbus.write_registers(0x0, REGISTER_CACHE, unit=UNIT)
 	modbus.close()
