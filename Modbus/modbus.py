@@ -49,10 +49,13 @@ class TwojStary:
 	def set_float(self, id, value):
 		self.ensure_cache(id + 4)
 
+		print(' [info] Attempt to sent float ' + str(value))
+
 		encoded_float = struct.pack('f', value)
 		if len(encoded_float) < 4:
-			print (' [error] Float byte format failed for: ' + value)
+			print (' [error] Float byte format failed for: ' + str(value))
 		else:
+			print ( ' [info] Packed float: ' + encoded_float)
 			for i in range(4):
 				self.REGISTER_CACHE[id + i] = encoded_float[i]
 				i = i + 1
