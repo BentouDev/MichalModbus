@@ -107,7 +107,7 @@ def send_to_modbus(widgets):
 
             if type == 2:
                 state = widget['status']
-                data_float_0 = widget['data_float_1']
+                data_float_1 = widget['data_float_1']
                 id_state = widget['modbus_write_0']
                 id_float = widget['modbus_write_1']
 
@@ -116,9 +116,9 @@ def send_to_modbus(widgets):
                 else:
                     sendLog(' [error] null data [state] for type [2]')
 
-                if ok(id_float) and ok(data_float_0):
+                if ok(id_float) and ok(data_float_1):
                     print('Dingus.')
-                    DINGUS.set_float(int(id_float), float(data_float_0))
+                    DINGUS.set_float(int(id_float), float(data_float_1))
                 else:
                     sendLog(' [error] null data [data_float_0] for type [2]')
 
