@@ -87,15 +87,17 @@ def ok(value):
     return value != None and value != ""
 
 def send_to_modbus(widgets):
+    sendLog(' [KURWA] :^)')
     try:
         # Connect to modbus
         modbus = sm.get_modbus(ModbusAddress)
 
         for widget in widgets:
+            sendLog(' [KURWA] :3')
             if type == 1 or type == 3: #
                 state = widget['state']
                 regid = widget['modbus_write_0'] 
-                
+
                 if ok(regid) and ok(state):
                     sendLog(' [verb] sanity 1,3')
                     sm.set_byte(regid, state)
