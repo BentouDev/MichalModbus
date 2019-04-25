@@ -18,7 +18,7 @@ def send(modbus, UNIT):
 
 	_print = ''
 	for x in REGISTER_CACHE:
-		_print = _print + '' + str(x)
+		_print = _print + ' ' + str(x)
 
 	print(" [Debug] raw modbus packet " + _print)
 
