@@ -59,6 +59,7 @@ class TwojStary:
 
 	def set_byte(self, id, value):
 		self.ensure_cache(id)
+		print (' [sanity] len: ' + str(len(self.REGISTER_CACHE)) + " vs: " + str(id))
 		if self.REGISTER_CACHE[id] != value:
 			print (' [debug] set register [' + str(id) + '] to ' + str(value))
 			self.REGISTER_CACHE[id] = value # Set as it is
