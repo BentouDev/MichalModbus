@@ -94,14 +94,12 @@ def send_to_modbus(widgets):
         DINGUS.aquire_modbus(ModbusAddress)
 
         for widget in widgets:
-            sendLog(' [KURWA] :3 ' + str(widget))
             type = widget['type']
             if type == 1 or type == 3: #
                 state = widget['status']
                 regid = widget['modbus_write_0'] 
 
                 if ok(regid) and ok(state):
-                    sendLog(' [verb] sanity 1,3')
                     DINGUS.set_byte(regid, state)
                 else:
                     sendLog(' [error] null data [state] for type [1,3]')
@@ -113,13 +111,11 @@ def send_to_modbus(widgets):
                 id_float = widget['modbus_write_1']
 
                 if ok(id_state) and ok(state):
-                    sendLog(' [verb] sanity 2.1')
                     DINGUS.set_byte(int(id_state), int(state))
                 else:
                     sendLog(' [error] null data [state] for type [2]')
 
                 if ok(id_float) and ok(data_float_0):
-                    sendLog(' [verb] sanity 2.2')
                     DINGUS.set_float(int(id_float), float(data_float_0))
                 else:
                     sendLog(' [error] null data [data_float_0] for type [2]')
@@ -129,7 +125,6 @@ def send_to_modbus(widgets):
                 regid = widget['modbus_write_0']
 
                 if ok(regid) and ok(state):
-                    sendLog(' [verb] sanity 4')
                     DINGUS.set_byte(int(regid), int(state))
                 else:
                     sendLog(' [error] null data [data_float_0] for type [4]')
