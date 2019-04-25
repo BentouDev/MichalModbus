@@ -112,13 +112,13 @@ def send_to_modbus(widgets):
 
                 if ok(id_state) and ok(state):
                     sendLog(' [verb] sanity 2.1')
-                    sm.set_byte(id_state, state)
+                    sm.set_byte(int(id_state), int(state))
                 else:
                     sendLog(' [error] null data [state] for type [2]')
 
                 if ok(id_float) and ok(data_float_0):
                     sendLog(' [verb] sanity 2.2')
-                    sm.set_float(id_float, float(data_float_0))
+                    sm.set_float(int(id_float), float(data_float_0))
                 else:
                     sendLog(' [error] null data [data_float_0] for type [2]')
 
@@ -128,7 +128,7 @@ def send_to_modbus(widgets):
 
                 if ok(regid) and ok(state):
                     sendLog(' [verb] sanity 4')
-                    sm.set_byte(regid, state)
+                    sm.set_byte(int(regid), int(state))
                 else:
                     sendLog(' [error] null data [data_float_0] for type [4]')
 
