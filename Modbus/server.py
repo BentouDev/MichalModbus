@@ -117,6 +117,7 @@ def send_to_modbus(widgets):
                     sendLog(' [error] null data [state] for type [2]')
 
                 if ok(id_float) and ok(data_float_0):
+                    print('Dingus.')
                     DINGUS.set_float(int(id_float), float(data_float_0))
                 else:
                     sendLog(' [error] null data [data_float_0] for type [2]')
