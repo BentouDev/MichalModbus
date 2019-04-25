@@ -57,9 +57,9 @@ class TwojStary:
 		else:
 			print ( ' [info] Packed float: ' + str(encoded_float))
 			decoded_float = struct.unpack('hh', encoded_float) # as two shorts
-			for i in range(2):
-				self.REGISTER_CACHE[id + i] = decoded_float[i]
-				i = i + 1
+
+			self.REGISTER_CACHE[id] = decoded_float[1]
+			self.REGISTER_CACHE[id + 1] = decoded_float[0]
 
 	def set_byte(self, id, value):
 		self.ensure_cache(id)
