@@ -417,7 +417,7 @@ def send_widgets_via_modbus():
 			temp_array.append({
 				'type':type_id,
 				'data_float_0':widget['data_float_0'],
-				'modbus_write_0':widget['modbus_write_0'],
+				'modbus_write_1':widget['modbus_write_1'],
 				'modbus_read_0':widget['modbus_read_0']
 			})
 
