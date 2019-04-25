@@ -10,7 +10,7 @@ rabbitmq:
    # - "./rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro"
 ModbusServer:
   #image: bentou/michalmodbus
-  build: ./WebApp
+  build: ./webapp
   image: webapp
   ports:
     - 80:5000
