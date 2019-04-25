@@ -15,6 +15,7 @@ def get_modbus(address):
 
 def send(modbus, UNIT):
 	rr = modbus.write_registers(0x0, REGISTER_CACHE, unit=UNIT)
+	modbus.close()
 	return rr
 
 def ensure_cache(id):
