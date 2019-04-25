@@ -92,6 +92,7 @@ def send_to_modbus(widgets):
     try:
         # Connect to modbus
         DINGUS.aquire_modbus(ModbusAddress)
+        DINGUS.cache_request(widgets)
 
         for widget in widgets:
             type = widget['type']

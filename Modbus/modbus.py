@@ -14,10 +14,14 @@ def get_modbus(address):
 class TwojStary:
 	REGISTER_CACHE = [0x0]*10
 	client = None
+	request = None
+
+	def cache_request(self, req):
+		self.request = req
 
 	def force_close(self):
-		if client != None:
-			client.close()
+		if self.client != None:
+			self.client.close()
 
 	def kurwa_resize(self, size):
 		if len(self.REGISTER_CACHE) < size:
