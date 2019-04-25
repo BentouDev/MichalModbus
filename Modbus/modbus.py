@@ -56,8 +56,9 @@ class TwojStary:
 			print (' [error] Float byte format failed for: ' + str(value))
 		else:
 			print ( ' [info] Packed float: ' + encoded_float)
-			for i in range(4):
-				self.REGISTER_CACHE[id + i] = encoded_float[i]
+			decoded_float = struct.unpack('hh', encoded_float) # as two shorts
+			for i in range(2):
+				self.REGISTER_CACHE[id + i] = decoded_float[i]
 				i = i + 1
 
 	def set_byte(self, id, value):
