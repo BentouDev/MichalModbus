@@ -118,14 +118,14 @@ def process_event_data(widget_id, data):
 
 def get_event_desc(widget_id, data):
 	try:
-		widget = datastorage.get_widgets()[widget_id]
+		widget = datastorage.get_widgets()[int(widget_id)]
 		name = widget['name']
 		desc = "(nothing)"
 
 		if widget['type'] == 2:
 			desc = "Temperature changed to " + str(data)
 
-		if widget['type'] == 4 and data == 1:
+		if widget['type'] == 4 and int(data) == 1:
 			desc = "ALARM RAISED"
 
 		return name, desc
@@ -163,7 +163,7 @@ def get_events():
 			ch.basic_ack(delivery_tag=method.delivery_tag)
 		closeQueue(ch, cnn)
 	except Exception as error:
-		logger.error(" [Error] Unable to open queue " + EventQueue + " due: " + str(error))
+		logger.error(" [Error] Event processing error " + EventQueue + " due: " + str(error))
 
 	return datastorage.get_events()
 
