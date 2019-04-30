@@ -265,6 +265,7 @@ def ProcessEvents():
                 sendLog(' [Debug] Attempt to read at ' + str(int(register_id)) + ' reg.')
                 modbus = sm.get_modbus(ModbusAddress)
                 rh = modbus.read_holding_registers(0x0 + int(register_id), 1, unit=UNIT)
+                modbus.close()
 
                 # If no error code in function code, save readed value
                 if rh.function_code < 0x80:
@@ -319,11 +320,8 @@ def start():
 
     while True:
         try:
-            print (' [Info] READING...')
             ProcessEvents()
-            print (' [Info] Awaiting commands...')
             ProcessCommands()
-            print (' [Debug] Sleep...')
             time.sleep(1)
         except KeyboardInterrupt :
             print(" Closed")
