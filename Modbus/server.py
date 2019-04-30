@@ -253,11 +253,10 @@ def ProcessEvents():
 
     # Search cached widgets for register id's to read
     for widget in DINGUS.request:
-        for widget in DINGUS.REGISTER_CACHE:
-            index = index + 1
-            if 'modbus_read_0' in widget:
-                read_register = widget['modbus_read_0']
-                registers_to_read.append({ 'widget' : widget, 'register' : read_register, 'index' : index })
+        index = index + 1
+        if 'modbus_read_0' in widget:
+            read_register = widget['modbus_read_0']
+            registers_to_read.append({ 'widget' : widget, 'register' : read_register, 'index' : index })
 
     data_to_send = []
     try:
