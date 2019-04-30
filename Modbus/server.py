@@ -286,7 +286,7 @@ def ProcessEvents():
                         should_send = True
 
                     if should_send:
-                        data_to_send.append({'data' : received_data, 'index' : index, 'timedate' : datetime.datetime.now()})
+                        data_to_send.append({'data' : received_data, 'index' : index, 'timedate' : datetime.datetime.now().isoformat()})
                         DINGUS.ensure_cache(register_id)
                         DINGUS.REGISTER_CACHE[register_id] = received_data
 
