@@ -148,9 +148,9 @@ def get_events():
 				data = datastore['data']
 				date = datastore['timedate']
 
-				process_event_data(index, data)
+				process_event_data(int(index), int(data))
 
-				name, desc = get_event_desc(index, data)
+				name, desc = get_event_desc(int(index), int(data))
 
 				logger.info(" [Info] Got event " + name + " with data " + data + " at: " + date)
 
