@@ -251,38 +251,32 @@ def ProcessEvents():
         print (' [Debug] Nothing to read...')
         return
 
-    registers_to_read = []
     index = 0
+    data_to_send = []
 
     # Search cached widgets for register id's to read
     for widget in DINGUS.request:
         index = index + 1
         if 'modbus_read_0' in widget:
-            read_register = widget['modbus_read_0']
-            registers_to_read.append({ 'widget' : widget, 'register' : read_register, 'index' : index })
+            try:
+                modbus = sm.get_modbus(ModbusAddress)
+                register_id = widget['modbus_read_0']
+                sendLog(' [Debug] Attempt to read at ' + str(int(register_id)) + ' reg.')
+                rh = modbus.read_holding_registers(0x1 + int(register_id), 1, unit=UNIT)
 
-    data_to_send = []
-    try:
-        for data in registers_to_read:
-            # Connect to modbus
-            modbus = sm.get_modbus(ModbusAddress)
-            register_id = data['register']
-            sendLog(' [Debug] Attempt to read at ' + str(int(register_id)) + ' reg.')
-            rh = modbus.read_holding_registers(0x1 + int(register_id), 1, unit=UNIT)
-
-            # If no error code in function code, save readed value
-            if rh.function_code < 0x80:
-                received_data = rh.registers[0]
-                if DINGUS.REGISTER_CACHE[register_id] != received_data:
-                    data_to_send.append({'data' : received_data, 'index' : data['index']})
-                    sendLog(' [Debug] Modbus succ ' + str(received_data) + ' from ' + register_id + ' reg.')
+                # If no error code in function code, save readed value
+                if rh.function_code < 0x80:
+                    received_data = rh.registers[0]
+                    if DINGUS.REGISTER_CACHE[register_id] != received_data:
+                        data_to_send.append({'data' : received_data, 'index' : data['index']})
+                        sendLog(' [Debug] Modbus succ ' + str(received_data) + ' from ' + register_id + ' reg.')
+                    else:
+                        sendLog(' [Debug] Modbus data not changed at: ' + register_id + ' reg.')
                 else:
-                    sendLog(' [Debug] Modbus data not changed at: ' + register_id + ' reg.')
-            else:
-                sendLog(" [Error] Modbus READ returned function code : " + str(rh.function_code))
+                    sendLog(" [Error] Modbus READ returned function code : " + str(rh.function_code))
 
-    except Exception as error:
-        sendLog(" [Error] Modbus READ from ip: " + ModbusAddress + " error: " + str(error))
+            except Exception as error:
+                sendLog(" [Error] Modbus READ from ip: " + ModbusAddress + " error: " + str(error))
 
     try:
         # Pack data to json and send it
