@@ -302,8 +302,11 @@ def start():
 
     while True:
         try:
+            print (' [Info] READING...')
             ProcessEvents()
+            print (' [Info] Awaiting commands...')
             ProcessCommands()
+            print (' [Debug] Sleep...')
             time.sleep(1)
         except KeyboardInterrupt :
             print(" Closed")
