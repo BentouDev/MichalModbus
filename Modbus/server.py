@@ -203,7 +203,7 @@ def legacy_send_to_modbus(widgets):
 def ProcessCommands():
     try:
         q, ch, cnn = openQueue(CommandQueue)
-        for method, properties, rawData in ch.consume(queue=CommandQueue):
+        for method, properties, rawData in ch.consume(queue=CommandQueue, inactivity_timeout=3):
             body = rawData.decode("utf-8") 
             sendLog ('[*] Received ' + body)
             datastore = json.loads(body)
