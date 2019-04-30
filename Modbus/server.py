@@ -273,9 +273,9 @@ def ProcessEvents():
                     received_data = rh.registers[0]
                     if DINGUS.REGISTER_CACHE[register_id] != received_data:
                         data_to_send.append({'data' : received_data, 'index' : index})
-                        sendLog(' [Debug] Modbus succ ' + str(received_data) + ' from ' + register_id + ' reg.')
+                        sendLog(' [Debug] Modbus succ ' + str(received_data) + ' from ' + str(register_id) + ' reg.')
                     else:
-                        sendLog(' [Debug] Modbus data not changed at: ' + register_id + ' reg.')
+                        sendLog(' [Debug] Modbus data not changed at: ' + str(register_id) + ' reg.')
                 else:
                     sendLog(" [Error] Modbus READ returned function code : " + str(rh.function_code))
 
