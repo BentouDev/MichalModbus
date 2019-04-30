@@ -264,7 +264,7 @@ def ProcessEvents():
             try:
                 sendLog(' [Debug] Attempt to read at ' + str(int(register_id)) + ' reg.')
                 modbus = sm.get_modbus(ModbusAddress)
-                rh = modbus.read_input_registers(0x0 + int(register_id), 1, unit=UNIT)
+                rh = modbus.read_holding_registers(0x0 + int(register_id), 1, unit=UNIT)
 
                 # If no error code in function code, save readed value
                 if rh.function_code < 0x80:
