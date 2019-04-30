@@ -262,8 +262,8 @@ def ProcessEvents():
         if 'modbus_read_0' in widget and ok(widget['modbus_read_0']):
             register_id = widget['modbus_read_0']
             try:
-                modbus = sm.get_modbus(ModbusAddress)
                 sendLog(' [Debug] Attempt to read at ' + str(int(register_id)) + ' reg.')
+                modbus = sm.get_modbus(ModbusAddress)
                 rh = modbus.read_input_registers(0x0 + int(register_id), 1, unit=UNIT)
 
                 # If no error code in function code, save readed value
