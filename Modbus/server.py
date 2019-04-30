@@ -243,10 +243,15 @@ def ProcessCommands():
         sendLog(" [Error] Catched exception: " + str(error))
 
 def ProcessEvents():
+    # nothing to do!
+    if not DINGUS or not DINGUS.request:
+        return
+
     registers_to_read = []
     index = 0
+
+    # Search cached widgets for register id's to read
     for widget in DINGUS.request:
-        # temp, alarm
         for widget in DINGUS.REGISTER_CACHE:
             index = index + 1
             if 'modbus_read_0' in widget:
@@ -259,6 +264,8 @@ def ProcessEvents():
             # Connect to modbus
             modbus = sm.get_modbus(ModbusAddress)
             rh = modbus.read_holding_registers(0x1 + data['register'], 1, unit=UNIT)
+
+            # If no error code in function code, save readed value
             if rh.function_code < 0x80:
                 received_data = rh.registers[0]
                 data_to_send.append({'data' : received_data, 'index' : data['index']})
@@ -270,6 +277,7 @@ def ProcessEvents():
         sendLog(" [Error] Modbus READ from ip: " + ModbusAddress + " error: " + str(error))
 
     try:
+        # Pack data to json and send it
         if len(data_to_send) > 0:
             body = json.dumps(data_to_send)
             publishToQueue(EventQueue, body)
