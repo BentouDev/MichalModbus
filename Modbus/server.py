@@ -279,7 +279,7 @@ def ProcessEvents():
 
                     should_send = False
                     if register_id < len(DINGUS.REGISTER_CACHE):
-                        print (' [Debug] Cached at ' + str(register_id) + ' is ' + DINGUS.REGISTER_CACHE[register_id])
+                        print (' [Debug] Cached at ' + str(register_id) + ' is ' + str(DINGUS.REGISTER_CACHE[register_id]))
                         should_send = DINGUS.REGISTER_CACHE[register_id] != received_data
                     else:
                         should_send = True
