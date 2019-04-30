@@ -139,24 +139,25 @@ def get_events():
 		logger.info(" [Info] Checking events...")
 		q, ch, cnn = openQueue(EventQueue)
 		for method, properties, rawData in ch.consume(queue=EventQueue, inactivity_timeout=0.5):
-			body = rawData.decode("utf-8")
-			datastore = json.loads(body)
-			logger.info(' [EVENT]' + body)
+			if rawData:
+				body = rawData.decode("utf-8")
+				datastore = json.loads(body)
+				logger.info(' [EVENT]' + body)
 
-			index = datastore['index']
-			data = datastore['data']
-			date = datastore['timedate']
+				index = datastore['index']
+				data = datastore['data']
+				date = datastore['timedate']
 
-			process_event_data(index, data)
+				process_event_data(index, data)
 
-			name, desc = get_event_desc(index, data)
+				name, desc = get_event_desc(index, data)
 
-			logger.info(" [Info] Got event " + name + " with data " + data + " at: " + date)
+				logger.info(" [Info] Got event " + name + " with data " + data + " at: " + date)
 
-			db_context = db.get_db()
-			cur = db_context.cursor()
-			cur.execute("INSERT INTO events (name, desc, date) VALUES (?, ?, ?)", [name, desc, date])
-			db_context.commit()
+				db_context = db.get_db()
+				cur = db_context.cursor()
+				cur.execute("INSERT INTO events (name, desc, date) VALUES (?, ?, ?)", [name, desc, date])
+				db_context.commit()
 
 			ch.basic_ack(delivery_tag=method.delivery_tag)
 	except Exception as error:
