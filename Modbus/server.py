@@ -245,6 +245,7 @@ def ProcessCommands():
 def ProcessEvents():
     # nothing to do!
     if not DINGUS or not DINGUS.request:
+        print (' [Debug] Nothing to read...')
         return
 
     registers_to_read = []
@@ -263,13 +264,17 @@ def ProcessEvents():
         for data in registers_to_read:
             # Connect to modbus
             modbus = sm.get_modbus(ModbusAddress)
-            rh = modbus.read_holding_registers(0x1 + data['register'], 1, unit=UNIT)
+            register_id = data['register']
+            rh = modbus.read_holding_registers(0x1 + register_id, 1, unit=UNIT)
 
             # If no error code in function code, save readed value
             if rh.function_code < 0x80:
                 received_data = rh.registers[0]
-                data_to_send.append({'data' : received_data, 'index' : data['index']})
-                sendLog(' [Debug] Modbus succ ' + str(received_data) + ' from ' + data['register'] + ' reg.')
+                if DINGUS.REGISTER_CACHE[register_id] != received_data:
+                    data_to_send.append({'data' : received_data, 'index' : data['index']})
+                    sendLog(' [Debug] Modbus succ ' + str(received_data) + ' from ' + register_id + ' reg.')
+                else:
+                    sendLog(' [Debug] Modbus data not changed at: ' + register_id + ' reg.')
             else:
                 sendLog(" [Error] Modbus READ returned function code : " + str(rh.function_code))
 
@@ -282,6 +287,8 @@ def ProcessEvents():
             body = json.dumps(data_to_send)
             publishToQueue(EventQueue, body)
             print(' [Debug] Sent event data: ' + body)
+        else:
+            print (' [Debug] Nothing to send...')
 
     except Exception as error:
         sendLog(" [Error] Error while sending to EVENT queue : " + str(error))
