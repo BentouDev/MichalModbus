@@ -255,6 +255,8 @@ def ProcessEvents():
     index = 0
     data_to_send = []
 
+    print (' [Debug] Processing cached request: ' + json.dumps(DINGUS.request))
+
     # Search cached widgets for register id's to read
     for widget in DINGUS.request:
         index = index + 1
