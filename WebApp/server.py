@@ -23,8 +23,9 @@ import logging
 import logging.handlers as handlers
 import time
 
-FORMAT = ('%(asctime)-15s %(threadName)-15s '
-          '%(levelname)-8s %(module)-15s:%(lineno)-8s %(message)s')
+# FORMAT = ('%(asctime)-15s %(threadName)-15s '
+#           '%(levelname)-8s %(module)-15s:%(lineno)-8s %(message)s')
+FORMAT = ('%(asctime)-15s at:%(lineno)-8s %(message)s')
 logging.basicConfig(format=FORMAT)
 
 log_path = 'webapp.log'
@@ -136,13 +137,13 @@ def get_event_desc(widget_id, data):
 # Get events sent by modbus
 def get_events():
 	try:
-		logger.info(" [Info] Checking events...")
+		logger.info("\n [Info] Checking events...")
 		q, ch, cnn = openQueue(EventQueue)
 		for method, properties, rawData in ch.consume(queue=EventQueue, inactivity_timeout=0.5):
 			if rawData:
 				body = rawData.decode("utf-8")
 				events = json.loads(body)
-				logger.info(' [EVENT]' + body)
+				logger.info('\n [EVENT]' + body)
 
 				for datastore in events:
 					index = datastore['index']
@@ -153,7 +154,7 @@ def get_events():
 
 					name, desc = get_event_desc(int(index), int(data))
 
-					logger.info(" [Info] Got event " + name + " with data " + data + " at: " + date)
+					logger.info("\n [Info] Got event " + name + " with data " + data + " at: " + date)
 
 					db_context = db.get_db()
 					cur = db_context.cursor()
@@ -164,7 +165,7 @@ def get_events():
 			ch.basic_ack(delivery_tag=method.delivery_tag)
 		closeQueue(ch, cnn)
 	except Exception as error:
-		logger.error(" [Error] Event processing error " + EventQueue + " due: " + str(error))
+		logger.error("\n [Error] Event processing error " + EventQueue + " due: " + str(error))
 
 	return datastorage.get_events()
 
