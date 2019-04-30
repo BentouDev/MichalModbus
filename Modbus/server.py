@@ -11,10 +11,10 @@ import modbus as sm
 import logging, traceback
 # FORMAT = ('%(asctime)-15s %(threadName)-15s '
 #           '%(levelname)-8s %(module)-15s:%(lineno)-8s %(message)s')
-# FORMAT = ('%(message)s')
-# logging.basicConfig(format=FORMAT)
-# log = logging.getLogger()
-# log.setLevel(logging.DEBUG)
+FORMAT = (' [VERBOSE] %(message)s')
+logging.basicConfig(format=FORMAT)
+log = logging.getLogger()
+log.setLevel(logging.DEBUG)
 
 # Predeclare global variables
 UNIT = 0x0
