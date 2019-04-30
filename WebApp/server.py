@@ -136,8 +136,9 @@ def get_event_desc(widget_id, data):
 # Get events sent by modbus
 def get_events():
 	try:
+		logger.info(" [Info] Checking events...")
 		q, ch, cnn = openQueue(EventQueue)
-		for method, properties, rawData in ch.consume(queue=EventQueue, inactivity_timeout=3):
+		for method, properties, rawData in ch.consume(queue=EventQueue, inactivity_timeout=0.5):
 			body = rawData.decode("utf-8")
 			datastore = json.loads(body)
 			logger.info(' [EVENT]' + body)
@@ -149,6 +150,8 @@ def get_events():
 			process_event_data(index, data)
 
 			name, desc = get_event_desc(index, data)
+
+			logger.info(" [Info] Got event " + name + " with data " + data + " at: " + date)
 
 			db_context = db.get_db()
 			cur = db_context.cursor()
@@ -368,7 +371,7 @@ def post_edit():
 def show_log():
 	try:
 		q, ch, cnn = openQueue(LogQueue)
-		for method, properties, rawData in ch.consume(queue=CommandQueue, inactivity_timeout=3):
+		for method, properties, rawData in ch.consume(queue=CommandQueue, inactivity_timeout=0.5):
 			body = rawData.decode("utf-8")
 			logger.info(' [RASP]' + body)
 			ch.basic_ack(delivery_tag=method.delivery_tag)
