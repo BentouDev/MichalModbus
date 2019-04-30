@@ -275,7 +275,7 @@ def ProcessEvents():
                         data_to_send.append({'data' : received_data, 'index' : index})
                         sendLog(' [Debug] Modbus succ ' + str(received_data) + ' from ' + str(register_id) + ' reg.')
                     else:
-                        sendLog(' [Debug] Modbus data not changed at: ' + str(register_id) + ' reg.')
+                        sendLog(' [Debug] Modbus data ' + str(received_data) + ' not changed at: ' + str(register_id) + ' reg.')
                 else:
                     sendLog(" [Error] Modbus READ returned function code : " + str(rh.function_code))
 
