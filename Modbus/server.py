@@ -276,9 +276,19 @@ def ProcessEvents():
                         x_idx = x_idx + 1
 
                     received_data = rh.registers[0]
- 
-                    if register_id < len(DINGUS.REGISTER_CACHE) and DINGUS.REGISTER_CACHE[register_id] != received_data:
+
+                    should_send = False
+                    if register_id < len(DINGUS.REGISTER_CACHE):
+                        print (' [Debug] Cached at ' + str(register_id) + ' is ' + DINGUS.REGISTER_CACHE[register_id])
+                        should_send = DINGUS.REGISTER_CACHE[register_id] != received_data
+                    else:
+                        should_send = True
+
+                    if should_send:
                         data_to_send.append({'data' : received_data, 'index' : index})
+                        DINGUS.ensure_cache(register_id)
+                        DINGUS.REGISTER_CACHE[register_id] = received_data
+
                         sendLog(' [Debug] Modbus succ ' + str(received_data) + ' from ' + str(register_id) + ' reg.')
                     else:
                         sendLog(' [Debug] Modbus data ' + str(received_data) + ' not changed or out of bound at: ' + str(register_id) + ' reg.')
