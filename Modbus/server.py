@@ -219,9 +219,10 @@ def ProcessCommands():
 
                 if datastore['command'] == 'modbus_send':
                     send_to_modbus(datastore['widgets'])
-            else: 
+            else:
                 break
 
+        ch.basic_ack(delivery_tag = method.delivery_tag)
         closeQueue(ch, cnn)
 
     except pika.exceptions.ConnectionClosedByBroker:
