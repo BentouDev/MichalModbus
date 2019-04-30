@@ -141,23 +141,24 @@ def get_events():
 		for method, properties, rawData in ch.consume(queue=EventQueue, inactivity_timeout=0.5):
 			if rawData:
 				body = rawData.decode("utf-8")
-				datastore = json.loads(body)
+				events = json.loads(body)
 				logger.info(' [EVENT]' + body)
 
-				index = datastore['index']
-				data = datastore['data']
-				date = datastore['timedate']
+				for datastore in events:
+					index = datastore['index']
+					data = datastore['data']
+					date = datastore['timedate']
 
-				process_event_data(int(index), int(data))
+					process_event_data(int(index), int(data))
 
-				name, desc = get_event_desc(int(index), int(data))
+					name, desc = get_event_desc(int(index), int(data))
 
-				logger.info(" [Info] Got event " + name + " with data " + data + " at: " + date)
+					logger.info(" [Info] Got event " + name + " with data " + data + " at: " + date)
 
-				db_context = db.get_db()
-				cur = db_context.cursor()
-				cur.execute("INSERT INTO events (name, desc, date) VALUES (?, ?, ?)", [name, desc, date])
-				db_context.commit()
+					db_context = db.get_db()
+					cur = db_context.cursor()
+					cur.execute("INSERT INTO events (name, desc, date) VALUES (?, ?, ?)", [name, desc, date])
+					db_context.commit()
 			else:
 				break
 			ch.basic_ack(delivery_tag=method.delivery_tag)
