@@ -256,8 +256,6 @@ def ProcessEvents():
     index = 0
     data_to_send = []
 
-    print (' [Debug] Processing cached request: ' + json.dumps(DINGUS.request))
-
     # Search cached widgets for register id's to read
     for widget in DINGUS.request:
         index = index + 1
@@ -266,10 +264,11 @@ def ProcessEvents():
             try:
                 modbus = sm.get_modbus(ModbusAddress)
                 sendLog(' [Debug] Attempt to read at ' + str(int(register_id)) + ' reg.')
-                rh = modbus.read_holding_registers(0x1 + int(register_id), 1, unit=UNIT)
+                rh = modbus.read_input_registers(0x1 + int(register_id), 1, unit=UNIT)
 
                 # If no error code in function code, save readed value
                 if rh.function_code < 0x80:
+                    sendLog(" [Info] Modbus READ returned function code : " + str(rh.function_code))
                     received_data = rh.registers[0]
                     if DINGUS.REGISTER_CACHE[register_id] != received_data:
                         data_to_send.append({'data' : received_data, 'index' : index})
