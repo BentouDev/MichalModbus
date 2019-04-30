@@ -204,23 +204,26 @@ def ProcessCommands():
     try:
         q, ch, cnn = openQueue(CommandQueue)
         for method, properties, rawData in ch.consume(queue=CommandQueue, inactivity_timeout=3):
-            body = rawData.decode("utf-8") 
-            sendLog ('[*] Received ' + body)
-            datastore = json.loads(body)
+            if rawData:
+                body = rawData.decode("utf-8") 
+                sendLog ('[*] Received ' + body)
+                datastore = json.loads(body)
 
-            # Refactor better
-            if datastore['command'] == 'ping':
-                modbus_ping()
+                # Refactor better
+                if datastore['command'] == 'ping':
+                    modbus_ping()
 
-            if datastore['command'] == 'change_ip':
-                ModbusAddress = datastore['address']
-                sendLog('Succ: Changed Modbus ip to ' + ModbusAddress)
+                if datastore['command'] == 'change_ip':
+                    ModbusAddress = datastore['address']
+                    sendLog('Succ: Changed Modbus ip to ' + ModbusAddress)
 
-            if datastore['command'] == 'modbus_send':
-                send_to_modbus(datastore['widgets'])
+                if datastore['command'] == 'modbus_send':
+                    send_to_modbus(datastore['widgets'])
+            else: 
+                break
 
         closeQueue(ch, cnn)
-    
+
     except pika.exceptions.ConnectionClosedByBroker:
         # Uncomment this to make the example not attempt recovery
         # from server-initiated connection closure, including
@@ -264,7 +267,8 @@ def ProcessEvents():
             # Connect to modbus
             modbus = sm.get_modbus(ModbusAddress)
             register_id = data['register']
-            rh = modbus.read_holding_registers(0x1 + register_id, 1, unit=UNIT)
+            sendLog(' [Debug] Attempt to read at ' + str(int(register_id)) + ' reg.')
+            rh = modbus.read_holding_registers(0x1 + int(register_id), 1, unit=UNIT)
 
             # If no error code in function code, save readed value
             if rh.function_code < 0x80:
