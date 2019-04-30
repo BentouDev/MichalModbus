@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import time, json, numpy
+import time, json, numpy, datetime
 
 # RabbitMq
 import pika
@@ -286,7 +286,7 @@ def ProcessEvents():
                         should_send = True
 
                     if should_send:
-                        data_to_send.append({'data' : received_data, 'index' : index})
+                        data_to_send.append({'data' : received_data, 'index' : index, 'timedate' : datetime.datetime.now()})
                         DINGUS.ensure_cache(register_id)
                         DINGUS.REGISTER_CACHE[register_id] = received_data
 

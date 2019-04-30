@@ -45,3 +45,9 @@ def get_widgets():
     cur = db_context.cursor()
     cur.execute ('SELECT * FROM widgets')
     return cur.fetchall()
+
+def get_events():
+    db_context = db.get_db()
+    cur = db_context.cursor()
+    cur.execute ('SELECT * FROM events')
+    return cur.fetchall()

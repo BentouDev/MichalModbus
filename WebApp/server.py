@@ -113,11 +113,69 @@ def publishToQueue(queueName, msg):
 # Definitions of all methods which can be run on server
 ########################################################
 
+def process_event_data(widget_id, data):
+	return
+
+def get_event_desc(widget_id, data):
+	try:
+		widget = datastorage.get_widgets()[widget_id]
+		name = widget['name']
+		desc = "(nothing)"
+
+		if widget['type'] == 2:
+			desc = "Temperature changed to " + str(data)
+
+		if widget['type'] == 4 and data == 1:
+			desc = "ALARM RAISED"
+
+		return name, desc
+
+	except Exception as error:
+		return "Noname","Unknown"
+
+# Get events sent by modbus
+def get_events():
+	try:
+		q, ch, cnn = openQueue(EventQueue)
+		for method, properties, rawData in ch.consume(queue=EventQueue):
+			body = rawData.decode("utf-8")
+			datastore = json.loads(body)
+			logger.info(' [EVENT]' + body)
+
+			index = datastore['index']
+			data = datastore['data']
+			date = datastore['timedate']
+
+			process_event_data(index, data)
+
+			name, desc = get_event_desc(index, data)
+
+			db_context = db.get_db()
+			cur = db_context.cursor()
+			cur.execute("INSERT INTO events (name, desc, date) VALUES (?, ?, ?)", [name, desc, date])
+			db_context.commit()
+
+			ch.basic_ack(delivery_tag=method.delivery_tag)
+	except Exception as error:
+		logger.error(" [Error] Unable to open queue " + EventQueue + " due: " + str(error))
+
+	return datastorage.get_events()
+
+# Events - event page
+@app.route("/events")
+def show_events():
+	# Get event list and display them
+	events = get_events()
+	data = {'events':events, 'event_count':len(events)}
+	return render_template('events.html', title='Modbus - Events', data = data)
+
 # Index - default page, 
 # displays status and widget list
 @app.route("/")
 @app.route("/index")
 def index():
+	events = get_events()
+
 	# put default message into page data dictionary
 	data = {'message':'Unknown error, check log'}
 
@@ -129,6 +187,7 @@ def index():
 	# put all widget data into page data dictionary
 	data['widgets'] = datastorage.get_widgets()
 	data['types'] = datastorage.get_widget_types()
+	data['event_count'] = len(events)
 
 	# Render index page
 	return render_template('index.html', title='Modbus', data = data)
@@ -312,6 +371,7 @@ def show_log():
 		for method, properties, rawData in ch.consume(queue=CommandQueue):
 			body = rawData.decode("utf-8")
 			logger.info(' [RASP]' + body)
+			ch.basic_ack(delivery_tag=method.delivery_tag)
 	except Exception as error:
 		logger.error(" [Error] Unable to open queue " + LogQueue)
 
