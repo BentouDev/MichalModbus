@@ -137,7 +137,7 @@ def get_event_desc(widget_id, data):
 def get_events():
 	try:
 		q, ch, cnn = openQueue(EventQueue)
-		for method, properties, rawData in ch.consume(queue=EventQueue):
+		for method, properties, rawData in ch.consume(queue=EventQueue, inactivity_timeout=3):
 			body = rawData.decode("utf-8")
 			datastore = json.loads(body)
 			logger.info(' [EVENT]' + body)
@@ -368,7 +368,7 @@ def post_edit():
 def show_log():
 	try:
 		q, ch, cnn = openQueue(LogQueue)
-		for method, properties, rawData in ch.consume(queue=CommandQueue):
+		for method, properties, rawData in ch.consume(queue=CommandQueue, inactivity_timeout=3):
 			body = rawData.decode("utf-8")
 			logger.info(' [RASP]' + body)
 			ch.basic_ack(delivery_tag=method.delivery_tag)
