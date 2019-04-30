@@ -257,10 +257,10 @@ def ProcessEvents():
     # Search cached widgets for register id's to read
     for widget in DINGUS.request:
         index = index + 1
-        if 'modbus_read_0' in widget:
+        if 'modbus_read_0' in widget and widget['modbus_read_0']:
+            register_id = widget['modbus_read_0']
             try:
                 modbus = sm.get_modbus(ModbusAddress)
-                register_id = widget['modbus_read_0']
                 sendLog(' [Debug] Attempt to read at ' + str(int(register_id)) + ' reg.')
                 rh = modbus.read_holding_registers(0x1 + int(register_id), 1, unit=UNIT)
 
