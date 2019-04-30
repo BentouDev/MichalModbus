@@ -154,7 +154,7 @@ def get_events():
 
 					name, desc = get_event_desc(int(index), int(data))
 
-					logger.info("\n [Info] Got event " + name + " with data " + data + " at: " + date)
+					logger.info("\n [Info] Got event " + str(name) + " with data " + str(data) + " at: " + str(date))
 
 					db_context = db.get_db()
 					cur = db_context.cursor()
