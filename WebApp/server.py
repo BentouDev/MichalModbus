@@ -158,8 +158,9 @@ def get_events():
 				cur = db_context.cursor()
 				cur.execute("INSERT INTO events (name, desc, date) VALUES (?, ?, ?)", [name, desc, date])
 				db_context.commit()
-			if method:
-				ch.basic_ack(delivery_tag=method.delivery_tag)
+			else:
+				break
+			ch.basic_ack(delivery_tag=method.delivery_tag)
 		closeQueue(ch, cnn)
 	except Exception as error:
 		logger.error(" [Error] Unable to open queue " + EventQueue + " due: " + str(error))
