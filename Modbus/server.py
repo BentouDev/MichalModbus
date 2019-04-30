@@ -221,6 +221,7 @@ def ProcessCommands():
                     send_to_modbus(datastore['widgets'])
             else:
                 break
+            print(" [Info] Sending ACK")
             ch.basic_ack(delivery_tag = method.delivery_tag)
 
         closeQueue(ch, cnn)
