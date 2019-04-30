@@ -269,12 +269,19 @@ def ProcessEvents():
                 # If no error code in function code, save readed value
                 if rh.function_code < 0x80:
                     sendLog(" [Info] Modbus READ returned function code : " + str(rh.function_code))
+
+                    x_idx = 0
+                    for x in rh.registers:
+                        print (' [VERBOSE] ' + str(x))
+                        x_idx = x_idx + 1
+
                     received_data = rh.registers[0]
-                    if DINGUS.REGISTER_CACHE[register_id] != received_data:
+ 
+                    if register_id < len(DINGUS.REGISTER_CACHE) and DINGUS.REGISTER_CACHE[register_id] != received_data:
                         data_to_send.append({'data' : received_data, 'index' : index})
                         sendLog(' [Debug] Modbus succ ' + str(received_data) + ' from ' + str(register_id) + ' reg.')
                     else:
-                        sendLog(' [Debug] Modbus data ' + str(received_data) + ' not changed at: ' + str(register_id) + ' reg.')
+                        sendLog(' [Debug] Modbus data ' + str(received_data) + ' not changed or out of bound at: ' + str(register_id) + ' reg.')
                 else:
                     sendLog(" [Error] Modbus READ returned function code : " + str(rh.function_code))
 
