@@ -66,6 +66,33 @@ def closeQueue(ch, cnn):
     ch.close()
     cnn.close()
 
+def publishToQueue(queueName, msg):
+	try:
+		print(' [DEBUG] Publishing to queue ' + queueName)
+		q, ch, cnn = openQueue(queueName)
+		ch.basic_publish(exchange='', routing_key=queueName, body=msg)
+		closeQueue(ch, cnn)
+
+	except pika.exceptions.ConnectionClosedByBroker:
+		# Uncomment this to make the example not attempt recovery
+		# from server-initiated connection closure, including
+		# when the node is stopped cleanly
+		#
+		# break
+		print(' [Error] Connection closed by broker')
+
+	# Do not recover on channel errors
+	except pika.exceptions.AMQPChannelError as err:
+		print(" [Error] Caught a channel error: {}, stopping...".format(err))
+
+	# Recover on all other connection errors
+	except pika.exceptions.AMQPConnectionError:
+		print(" [Error] Connection was closed, retrying...")
+
+	# Write whatever was thrown
+	except Exception as error:
+		print(" [Error] Catched exception: " + str(error))
+
 def sendLog(msg):
     print(msg)
 
@@ -105,7 +132,7 @@ def send_to_modbus(widgets):
                 else:
                     sendLog(' [error] null data [state] for type [1,3]')
 
-            if type == 2:
+            if type == 2: # Temp
                 state = widget['status']
                 data_float_1 = widget['data_float_1']
                 id_state = widget['modbus_write_0']
@@ -121,7 +148,7 @@ def send_to_modbus(widgets):
                 else:
                     sendLog(' [error] null data [data_float_0] for type [2]')
 
-            if type == 4:
+            if type == 4: # Alarm
                 state = widget['status']
                 pin = widget['data_float_0']
                 id_state = widget['modbus_write_0']
@@ -144,7 +171,7 @@ def send_to_modbus(widgets):
     except Exception as error:
         DINGUS.force_close()
         tb = traceback.format_exc()
-        sendLog(" [Error] Modbus ip: " + ModbusAddress + " error: " + str(error) + "\n" + tb)
+        sendLog(" [Error] Modbus WRITE to ip: " + ModbusAddress + " error: " + str(error) + "\n" + tb)
 
 def legacy_send_to_modbus(widgets):
     try:
@@ -171,7 +198,7 @@ def legacy_send_to_modbus(widgets):
         return rr
 
     except Exception as error:
-        sendLog(" [Error] Modbus ip: " + ModbusAddress + " error: " + str(error))
+        sendLog(" [Error] Modbus WRITE to ip: " + ModbusAddress + " error: " + str(error))
 
 def ProcessCommands():
     try:
@@ -216,9 +243,40 @@ def ProcessCommands():
         sendLog(" [Error] Catched exception: " + str(error))
 
 def ProcessEvents():
-    q, ch, cnn = openQueue(EventQueue)
+    registers_to_read = []
+    index = 0
+    for widget in DINGUS.request:
+        # temp, alarm
+        for widget in DINGUS.REGISTER_CACHE:
+            index = index + 1
+            if 'modbus_read_0' in widget:
+                read_register = widget['modbus_read_0']
+                registers_to_read.append({ 'widget' : widget, 'register' : read_register, 'index' : index })
 
-    closeQueue(ch, cnn)
+    data_to_send = []
+    try:
+        for data in registers_to_read:
+            # Connect to modbus
+            modbus = sm.get_modbus(ModbusAddress)
+            rh = modbus.read_holding_registers(0x1 + data['register'], 1, unit=UNIT)
+            if rh.function_code < 0x80:
+                received_data = rh.registers[0]
+                data_to_send.append({'data' : received_data, 'index' : data['index']})
+                sendLog(' [Debug] Modbus succ ' + str(received_data) + ' from ' + data['register'] + ' reg.')
+            else:
+                sendLog(" [Error] Modbus READ returned function code : " + str(rh.function_code))
+
+    except Exception as error:
+        sendLog(" [Error] Modbus READ from ip: " + ModbusAddress + " error: " + str(error))
+
+    try:
+        if len(data_to_send) > 0:
+            body = json.dumps(data_to_send)
+            publishToQueue(EventQueue, body)
+            print(' [Debug] Sent event data: ' + body)
+
+    except Exception as error:
+        sendLog(" [Error] Error while sending to EVENT queue : " + str(error))
 
 # Python specific - startup of  server
 def start():
@@ -229,7 +287,7 @@ def start():
 
     while True:
         try:
-            #ProcessEvents()
+            ProcessEvents()
             ProcessCommands()
             time.sleep(1)
         except KeyboardInterrupt :
