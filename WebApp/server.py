@@ -123,14 +123,14 @@ def process_event_data(widget_id, data):
 		logger.info(' [EVENT] got widget' + str(widget))
 
 		if widget['type'] == 2:
-			encoded_float = struct.pack('hh', [0,data])
+			encoded_float = struct.pack('hh', [0,int(data)])
 			decoded_float = struct.unpack('f', encoded_float) # as two shorts
 
 			cur.execute ('UPDATE widgets SET data_float_0 = ? WHERE id == ?', [decoded_float, widget_id])
 			logger.info (" [Info] Changed data_float_0 of '" + widget['name'] + "' to '" + str(decoded_float) + "'!")
 
 	except Exception as error:
-		print(' [error] Widget event processing error: ' + str(error))
+		logger.error(' [error] Widget ' + str(widget_id) + ' event processing error: ' + str(error))
 	return
 
 def get_event_desc(widget_id, data):
