@@ -33,7 +33,7 @@
                                     <div class="btn-group btn-toggle">
                                     {% set labels=["OFF","ON","MOTION","ILUMINANCE"] %}
                                     {% for x in range(4) %}
-                                        <button value="{{ (1).__lshift__((x - 1)|abs) }}" type="submit" name="Toggle" class="btn btn-sm {% if widget.status == x %} btn-default active {% else %} btn-primary {% endif %}">{{labels[x]}}</button>
+                                        <button value="{{x}}" type="submit" name="Toggle" class="btn btn-sm {% if widget.status == x %} btn-default active {% else %} btn-primary {% endif %}">{{labels[x]}}</button>
                                     {% endfor %}
                                     </div>
                                 </form>

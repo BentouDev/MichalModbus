@@ -466,7 +466,13 @@ def send_widgets_via_modbus():
 	temp_array = []
 	for widget in temp_widgets:
 		type_id = widget['type']
-		if type_id == 1 or type_id == 3: # Simple status for Light and Blinders
+		if type_id == 1: # Simple status for Light
+			temp_array.append({
+				'type':type_id,
+				'status': (1).__lshift__(int(widget['status'])),
+				'modbus_write_0':widget['modbus_write_0']
+			})
+		elif type_id == 3: # Simple Blinders
 			temp_array.append({
 				'type':type_id,
 				'status':widget['status'],
