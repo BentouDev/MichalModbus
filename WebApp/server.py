@@ -129,6 +129,7 @@ def process_event_data(widget_id, data):
 			temperature = float(decoded_float[0])
 
 			cur.execute ('UPDATE widgets SET data_float_0 = ? WHERE id == ?', [temperature, widget_id])
+			db_context.commit()
 			logger.info (" [Info] Changed data_float_0 of '" + widget['name'] + "' to '" + str(decoded_float) + "'!")
 			return temperature
 
