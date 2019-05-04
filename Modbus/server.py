@@ -259,45 +259,46 @@ def ProcessEvents():
     # Search cached widgets for register id's to read
     for widget in DINGUS.request:
         index = index + 1
-        if 'modbus_read_0' in widget and ok(widget['modbus_read_0']):
-            register_id = widget['modbus_read_0']
-            try:
-                sendLog(' [Debug] Attempt to read at ' + str(int(register_id)) + ' reg.')
-                modbus = sm.get_modbus(ModbusAddress)
-                rh = modbus.read_holding_registers(0x0 + int(register_id), 1, unit=UNIT)
-                modbus.close()
+        for reg_name in ['modbus_read_0','modbus_read_1']:
+            if reg_name in widget and ok(widget[reg_name]):
+                register_id = widget[reg_name]
+                try:
+                    sendLog(' [Debug] Attempt to read at ' + str(int(register_id)) + ' reg.')
+                    modbus = sm.get_modbus(ModbusAddress)
+                    rh = modbus.read_holding_registers(0x0 + int(register_id), 1, unit=UNIT)
+                    modbus.close()
 
-                # If no error code in function code, save readed value
-                if rh.function_code < 0x80:
-                    sendLog(" [Info] Modbus READ returned function code : " + str(rh.function_code))
+                    # If no error code in function code, save readed value
+                    if rh.function_code < 0x80:
+                        sendLog(" [Info] Modbus READ returned function code : " + str(rh.function_code))
 
-                    x_idx = 0
-                    for x in rh.registers:
-                        print (' [VERBOSE] ' + str(x))
-                        x_idx = x_idx + 1
+                        x_idx = 0
+                        for x in rh.registers:
+                            print (' [VERBOSE] ' + str(x))
+                            x_idx = x_idx + 1
 
-                    received_data = rh.registers[0]
+                        received_data = rh.registers[0]
 
-                    should_send = False
-                    if register_id < len(DINGUS.REGISTER_CACHE):
-                        print (' [Debug] Cached at ' + str(register_id) + ' is ' + str(DINGUS.REGISTER_CACHE[register_id]))
-                        should_send = DINGUS.REGISTER_CACHE[register_id] != received_data
+                        should_send = False
+                        if register_id < len(DINGUS.REGISTER_CACHE):
+                            print (' [Debug] Cached at ' + str(register_id) + ' is ' + str(DINGUS.REGISTER_CACHE[register_id]))
+                            should_send = DINGUS.REGISTER_CACHE[register_id] != received_data
+                        else:
+                            should_send = True
+
+                        if should_send:
+                            data_to_send.append({'data' : received_data, 'index' : index, 'timedate' : datetime.datetime.now().isoformat()})
+                            DINGUS.ensure_cache(register_id)
+                            DINGUS.REGISTER_CACHE[register_id] = received_data
+
+                            sendLog(' [Debug] Modbus succ ' + str(received_data) + ' from ' + str(register_id) + ' reg.')
+                        else:
+                            sendLog(' [Debug] Modbus data ' + str(received_data) + ' not changed or out of bound at: ' + str(register_id) + ' reg.')
                     else:
-                        should_send = True
+                        sendLog(" [Error] Modbus READ returned function code : " + str(rh.function_code))
 
-                    if should_send:
-                        data_to_send.append({'data' : received_data, 'index' : index, 'timedate' : datetime.datetime.now().isoformat()})
-                        DINGUS.ensure_cache(register_id)
-                        DINGUS.REGISTER_CACHE[register_id] = received_data
-
-                        sendLog(' [Debug] Modbus succ ' + str(received_data) + ' from ' + str(register_id) + ' reg.')
-                    else:
-                        sendLog(' [Debug] Modbus data ' + str(received_data) + ' not changed or out of bound at: ' + str(register_id) + ' reg.')
-                else:
-                    sendLog(" [Error] Modbus READ returned function code : " + str(rh.function_code))
-
-            except Exception as error:
-                sendLog(" [Error] Modbus READ from ip: " + ModbusAddress + " error: " + str(error))
+                except Exception as error:
+                    sendLog(" [Error] Modbus READ from ip: " + ModbusAddress + " error: " + str(error))
 
     try:
         # Pack data to json and send it
