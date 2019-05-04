@@ -264,8 +264,6 @@ def ProcessEvents():
                 read_register_id = widget[reg_name]
                 registers_to_read = [read_register_id]
 
-                if int(widget['type']) == 4:
-                    registers_to_read.append(read_register_id+1)
                 for register_id in registers_to_read:
                     try:
                         sendLog(' [Debug] Attempt to read at ' + str(int(register_id)) + ' reg.')
@@ -292,7 +290,7 @@ def ProcessEvents():
                                 should_send = True
 
                             if should_send:
-                                data_to_send.append({reg_name : received_data, 'index' : index, 'timedate' : datetime.datetime.now().isoformat()})
+                                data_to_send.append({'data' : received_data, 'index' : index, 'timedate' : datetime.datetime.now().isoformat()})
                                 DINGUS.ensure_cache(register_id)
                                 DINGUS.REGISTER_CACHE[register_id] = received_data
 

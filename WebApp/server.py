@@ -13,7 +13,7 @@ from flask import url_for
 # Bootstrap library extension for Flask
 from flask_bootstrap import Bootstrap
 
-import pika
+import pika, struct
 
 import db as db
 import datastorage as datastorage
@@ -115,6 +115,20 @@ def publishToQueue(queueName, msg):
 ########################################################
 
 def process_event_data(widget_id, data):
+	try:
+		widget = datastorage.get_widgets()[int(widget_id)]
+		db_context = db.get_db()
+		cur = db_context.cursor()
+
+		if widget['type'] == 2:
+			encoded_float = struct.pack('hh', [0,data])
+			decoded_float = struct.unpack('f', encoded_float) # as two shorts
+
+			cur.execute ('UPDATE widgets SET data_float_0 = ? WHERE id == ?', [decoded_float, widget_id])
+			logger.info (" [Info] Changed data_float_0 of '" + widget['name'] + "' to '" + str(decoded_float) + "'!")
+
+	except Exception as error:
+		print(' [error] Widget event processing error: ' + str(error))
 	return
 
 def get_event_desc(widget_id, data):
