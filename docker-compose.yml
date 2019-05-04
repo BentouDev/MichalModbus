@@ -14,4 +14,3 @@ modbus:
     - 80:5000
   volumes:
     - "./webapp.config:/app/webapp.config"
-    - "${PWD}/data.sqlite:/app/data.sqlite"
