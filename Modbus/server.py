@@ -128,7 +128,7 @@ def send_to_modbus(widgets):
                 regid = widget['modbus_write_0'] 
 
                 if ok(regid) and ok(state):
-                    DINGUS.set_byte(int(regid), int(state)+1)
+                    DINGUS.set_byte(int(regid), int(state))
                 else:
                     sendLog(' [error] null data [state] for type [1,3]')
 
