@@ -126,12 +126,15 @@ def process_event_data(widget_id, data):
 			encoded_float = struct.pack('HH', 0, int(data))
 			decoded_float = struct.unpack('f', encoded_float) # as two shorts
 
-			cur.execute ('UPDATE widgets SET data_float_0 = ? WHERE id == ?', [float(decoded_float[0]), widget_id])
+			temperature = float(decoded_float[0])
+
+			cur.execute ('UPDATE widgets SET data_float_0 = ? WHERE id == ?', [temperature, widget_id])
 			logger.info (" [Info] Changed data_float_0 of '" + widget['name'] + "' to '" + str(decoded_float) + "'!")
+			return temperature
 
 	except Exception as error:
 		logger.error(' [error] Widget ' + str(widget_id) + ' event processing error: ' + str(error))
-	return
+	return data
 
 def get_event_desc(widget_id, data):
 	try:
@@ -140,7 +143,7 @@ def get_event_desc(widget_id, data):
 		desc = "(nothing)"
 
 		if widget['type'] == 2:
-			desc = "Temperature changed to " + str(data)
+			desc = "Temperature changed to " + str(data) + "C"
 
 		if widget['type'] == 4 and int(data) == 1:
 			desc = "ALARM RAISED"
@@ -166,9 +169,9 @@ def get_events():
 					data = datastore['data']
 					date = datastore['timedate']
 
-					process_event_data(int(index) - 1, int(data))
+					data = process_event_data(int(index) - 1, int(data))
 
-					name, desc = get_event_desc(int(index) - 1, int(data))
+					name, desc = get_event_desc(int(index) - 1, data)
 
 					logger.info("\n [Info] Got event " + str(name) + " with data " + str(data) + " at: " + str(date))
 
