@@ -6,6 +6,7 @@ def get_widget_types():
         {"name":"Temperature"},
         {"name":"Blinders"},
         {"name":"Alarm"},
+        {"name":"Time events"}
     ]
 
     for x in range(len(result)):

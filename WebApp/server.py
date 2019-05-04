@@ -497,7 +497,7 @@ def send_widgets_via_modbus():
 				'status': (1).__lshift__(int(widget['status'])),
 				'modbus_write_0':widget['modbus_write_0']
 			})
-		elif type_id == 3: # Simple Blinders
+		elif type_id == 3 or type_id == 5: # Simple Blinders
 			temp_array.append({
 				'type':type_id,
 				'status':widget['status'],
