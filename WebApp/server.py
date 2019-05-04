@@ -25,8 +25,8 @@ import time
 
 # FORMAT = ('%(asctime)-15s %(threadName)-15s '
 #           '%(levelname)-8s %(module)-15s:%(lineno)-8s %(message)s')
-#FORMAT = ('%(asctime)-15s at:%(lineno)-8s %(message)s')
-#logging.basicConfig(format=FORMAT)
+FORMAT = ('%(asctime)-15s at:%(lineno)-8s %(message)s')
+logging.basicConfig(format=FORMAT)
 
 log_path = 'webapp.log'
 
@@ -34,7 +34,7 @@ handler = handlers.RotatingFileHandler(log_path, maxBytes=2048, backupCount=5)
 handler.setLevel(logging.INFO)
 
 logger = logging.getLogger()
-logger.setLevel(logging.WARN)
+logger.setLevel(logging.DEBUG)
 #logger.addHandler(handler)
 
 # Create flask server app
@@ -119,6 +119,8 @@ def process_event_data(widget_id, data):
 		widget = datastorage.get_widgets()[int(widget_id)]
 		db_context = db.get_db()
 		cur = db_context.cursor()
+
+		logger.info(' [EVENT] got widget' + str(widget))
 
 		if widget['type'] == 2:
 			encoded_float = struct.pack('hh', [0,data])
