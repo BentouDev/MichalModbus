@@ -402,6 +402,7 @@ def update_widget(id):
 	modbus_write_0 = request.args.get("modbus_write_0")
 	modbus_write_1 = request.args.get("modbus_write_1")
 	modbus_read_0 = request.args.get("modbus_read_0")
+	modbus_read_1 = request.args.get("modbus_read_1")
 
 	base_cmd = 'UPDATE widgets SET name = ?, type = ?, img = ?'
 	base_data = [name, type_id, img]
@@ -417,6 +418,10 @@ def update_widget(id):
 	if modbus_read_0:
 		base_cmd += ', modbus_read_0 = ?'
 		base_data.append(modbus_read_0)
+
+	if modbus_read_1:
+		base_cmd += ', modbus_read_1 = ?'
+		base_data.append(modbus_read_1)
 
 	base_cmd += ' WHERE id == ?'
 	base_data.append(id)
@@ -485,7 +490,8 @@ def send_widgets_via_modbus():
 				'data_float_1':widget['data_float_1'],
 				'modbus_write_0':widget['modbus_write_0'],
 				'modbus_write_1':widget['modbus_write_1'],
-				'modbus_read_0':widget['modbus_read_0']
+				'modbus_read_0':widget['modbus_read_0'],
+				'modbus_read_1':widget['modbus_read_1'],
 			})
 		elif type_id == 4: # Value for Alarm
 			temp_array.append({
