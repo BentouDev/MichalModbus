@@ -126,7 +126,7 @@ def process_event_data(widget_id, data):
 			encoded_float = struct.pack('HH', 0, int(data))
 			decoded_float = struct.unpack('f', encoded_float) # as two shorts
 
-			cur.execute ('UPDATE widgets SET data_float_0 = ? WHERE id == ?', [float(decoded_float), widget_id])
+			cur.execute ('UPDATE widgets SET data_float_0 = ? WHERE id == ?', [float(decoded_float[0]), widget_id])
 			logger.info (" [Info] Changed data_float_0 of '" + widget['name'] + "' to '" + str(decoded_float) + "'!")
 
 	except Exception as error:
