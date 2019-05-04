@@ -123,7 +123,7 @@ def process_event_data(widget_id, data):
 		logger.info(' [EVENT] got widget' + str(widget))
 
 		if widget['type'] == 2:
-			encoded_float = struct.pack('hh', 0, int(data))
+			encoded_float = struct.pack('HH', 0, int(data))
 			decoded_float = struct.unpack('f', encoded_float) # as two shorts
 
 			cur.execute ('UPDATE widgets SET data_float_0 = ? WHERE id == ?', [decoded_float, widget_id])
