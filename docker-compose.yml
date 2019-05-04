@@ -14,4 +14,8 @@ modbus:
     - 80:5000
   volumes:
     - "./webapp.config:/app/webapp.config"
-    - "./data.sqlite:/app/data.sqlite"
+    - type: volume
+      source: ./data.sqlite
+      target: /app/data.sqlite
+      volume:
+        nocopy: true
