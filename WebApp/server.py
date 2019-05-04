@@ -25,8 +25,8 @@ import time
 
 # FORMAT = ('%(asctime)-15s %(threadName)-15s '
 #           '%(levelname)-8s %(module)-15s:%(lineno)-8s %(message)s')
-FORMAT = ('%(asctime)-15s at:%(lineno)-8s %(message)s')
-logging.basicConfig(format=FORMAT)
+#FORMAT = ('%(asctime)-15s at:%(lineno)-8s %(message)s')
+#logging.basicConfig(format=FORMAT)
 
 log_path = 'webapp.log'
 
@@ -34,7 +34,7 @@ handler = handlers.RotatingFileHandler(log_path, maxBytes=2048, backupCount=5)
 handler.setLevel(logging.INFO)
 
 logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.WARN)
 #logger.addHandler(handler)
 
 # Create flask server app
