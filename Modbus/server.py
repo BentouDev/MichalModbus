@@ -123,7 +123,7 @@ def send_to_modbus(widgets):
 
         for widget in widgets:
             type = widget['type']
-            if type == 1 or type == 3: #
+            if type == 1 or type == 3 or type == 5: #
                 state = widget['status']
                 regid = widget['modbus_write_0'] 
 
