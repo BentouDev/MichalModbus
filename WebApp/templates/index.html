@@ -64,7 +64,7 @@
                                     <div class="btn-group btn-toggle">
                                     {% set labels=["UP","DOWN"] %}
                                     {% for x in range(2) %}
-                                        <button value="{{x}}" type="submit" name="Toggle" class="btn btn-sm {% if widget.status == x %} btn-default active {% else %} btn-primary {% endif %}">{{labels[x]}}</button>
+                                        <button value="{{x+1}}" type="submit" name="Toggle" class="btn btn-sm {% if widget.status == x %} btn-default active {% else %} btn-primary {% endif %}">{{labels[x]}}</button>
                                     {% endfor %}
                                     </div>
                                 </form>
