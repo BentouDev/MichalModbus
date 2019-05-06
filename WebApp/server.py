@@ -13,7 +13,7 @@ from flask import url_for
 # Bootstrap library extension for Flask
 from flask_bootstrap import Bootstrap
 
-import pika
+import pika, struct
 
 import db as db
 import datastorage as datastorage
@@ -115,7 +115,27 @@ def publishToQueue(queueName, msg):
 ########################################################
 
 def process_event_data(widget_id, data):
-	return
+	try:
+		widget = datastorage.get_widgets()[int(widget_id)]
+		db_context = db.get_db()
+		cur = db_context.cursor()
+
+		logger.info(' [EVENT] got widget' + str(widget))
+
+		if widget['type'] == 2:
+			encoded_float = struct.pack('HH', 0, int(data))
+			decoded_float = struct.unpack('f', encoded_float) # as two shorts
+
+			temperature = float(decoded_float[0])
+
+			cur.execute ('UPDATE widgets SET data_float_0 = ? WHERE id == ?', [temperature, widget_id])
+			db_context.commit()
+			logger.info (" [Info] Changed data_float_0 of '" + widget['name'] + "' to '" + str(decoded_float) + "'!")
+			return temperature
+
+	except Exception as error:
+		logger.error(' [error] Widget ' + str(widget_id) + ' event processing error: ' + str(error))
+	return data
 
 def get_event_desc(widget_id, data):
 	try:
@@ -124,7 +144,7 @@ def get_event_desc(widget_id, data):
 		desc = "(nothing)"
 
 		if widget['type'] == 2:
-			desc = "Temperature changed to " + str(data)
+			desc = "Temperature changed to " + str(data) + "C"
 
 		if widget['type'] == 4 and int(data) == 1:
 			desc = "ALARM RAISED"
@@ -150,9 +170,9 @@ def get_events():
 					data = datastore['data']
 					date = datastore['timedate']
 
-					process_event_data(int(index) - 1, int(data))
+					data = process_event_data(int(index) - 1, int(data))
 
-					name, desc = get_event_desc(int(index) - 1, int(data))
+					name, desc = get_event_desc(int(index) - 1, data)
 
 					logger.info("\n [Info] Got event " + str(name) + " with data " + str(data) + " at: " + str(date))
 
@@ -402,6 +422,7 @@ def update_widget(id):
 	modbus_write_0 = request.args.get("modbus_write_0")
 	modbus_write_1 = request.args.get("modbus_write_1")
 	modbus_read_0 = request.args.get("modbus_read_0")
+	modbus_read_1 = request.args.get("modbus_read_1")
 
 	base_cmd = 'UPDATE widgets SET name = ?, type = ?, img = ?'
 	base_data = [name, type_id, img]
@@ -417,6 +438,10 @@ def update_widget(id):
 	if modbus_read_0:
 		base_cmd += ', modbus_read_0 = ?'
 		base_data.append(modbus_read_0)
+
+	if modbus_read_1:
+		base_cmd += ', modbus_read_1 = ?'
+		base_data.append(modbus_read_1)
 
 	base_cmd += ' WHERE id == ?'
 	base_data.append(id)
@@ -466,7 +491,13 @@ def send_widgets_via_modbus():
 	temp_array = []
 	for widget in temp_widgets:
 		type_id = widget['type']
-		if type_id == 1 or type_id == 3: # Simple status for Light and Blinders
+		if type_id == 1: # Simple status for Light
+			temp_array.append({
+				'type':type_id,
+				'status': (1).__lshift__(int(widget['status'])),
+				'modbus_write_0':widget['modbus_write_0']
+			})
+		elif type_id == 3 or type_id == 5: # Simple Blinders
 			temp_array.append({
 				'type':type_id,
 				'status':widget['status'],
@@ -479,7 +510,8 @@ def send_widgets_via_modbus():
 				'data_float_1':widget['data_float_1'],
 				'modbus_write_0':widget['modbus_write_0'],
 				'modbus_write_1':widget['modbus_write_1'],
-				'modbus_read_0':widget['modbus_read_0']
+				'modbus_read_0':widget['modbus_read_0'],
+				'modbus_read_1':widget['modbus_read_1'],
 			})
 		elif type_id == 4: # Value for Alarm
 			temp_array.append({

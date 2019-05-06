@@ -6,7 +6,6 @@ rabbitmq:
     - 5672:5672
   volumes:
     - "./rabbitmq_plugins:/etc/rabbitmq/enabled_plugins"
-    - "./WebApp/data.sqlite:/app/data.sqlite"
    # - "./rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro"
 modbus:
   #image: bentou/michalmodbus
