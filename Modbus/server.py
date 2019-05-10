@@ -33,7 +33,7 @@ CommandQueue = 'modbus_commands'
 EventQueue = 'modbus_events'
 LogQueue = 'log_queue'
 
-DINGUS = sm.TwojStary()
+Buffer = sm.RegisterBuffer()
 
 def trySet(data, name, default):
 	if data.get(name):
@@ -118,8 +118,8 @@ def ok(value):
 def send_to_modbus(widgets):
     try:
         # Connect to modbus
-        DINGUS.aquire_modbus(ModbusAddress)
-        DINGUS.cache_request(widgets)
+        Buffer.aquire_modbus(ModbusAddress)
+        Buffer.cache_request(widgets)
 
         for widget in widgets:
             type = widget['type']
@@ -128,7 +128,7 @@ def send_to_modbus(widgets):
                 regid = widget['modbus_write_0'] 
 
                 if ok(regid) and ok(state):
-                    DINGUS.set_byte(int(regid), int(state))
+                    Buffer.set_byte(int(regid), int(state))
                 else:
                     sendLog(' [error] null data [state] for type [1,3]')
 
@@ -139,12 +139,12 @@ def send_to_modbus(widgets):
                 id_float = widget['modbus_write_1']
 
                 if ok(id_state) and ok(state):
-                    DINGUS.set_byte(int(id_state), int(state))
+                    Buffer.set_byte(int(id_state), int(state))
                 else:
                     sendLog(' [error] null data [state] for type [2]')
 
                 if ok(id_float) and ok(data_float_1):
-                    DINGUS.set_float(int(id_float), float(data_float_1))
+                    Buffer.set_float(int(id_float), float(data_float_1))
                 else:
                     sendLog(' [error] null data [data_float_0] for type [2]')
 
@@ -155,21 +155,21 @@ def send_to_modbus(widgets):
                 id_pin = widget['modbus_write_1']
 
                 if ok(id_state) and ok(state):
-                    DINGUS.set_byte(int(id_state), int(state))
+                    Buffer.set_byte(int(id_state), int(state))
                 else:
                     sendLog(' [error] null data [state] for type [4]')
 
                 if ok(id_pin) and ok(pin):
-                    DINGUS.set_byte(int(id_pin), int(pin))
+                    Buffer.set_byte(int(id_pin), int(pin))
                 else:
                     sendLog(' [error] null data [data_float_0] for type [4]')
 
         sendLog(" [Info] sending data to modbus at " + ModbusAddress + "...")
-        rr = DINGUS.send(UNIT)
+        rr = Buffer.send(UNIT)
         return rr
 
     except Exception as error:
-        DINGUS.force_close()
+        Buffer.force_close()
         tb = traceback.format_exc()
         sendLog(" [Error] Modbus WRITE to ip: " + ModbusAddress + " error: " + str(error) + "\n" + tb)
 
@@ -249,7 +249,7 @@ def ProcessCommands():
 
 def ProcessEvents():
     # nothing to do!
-    if not DINGUS or not DINGUS.request:
+    if not Buffer or not Buffer.request:
         print (' [Debug] Nothing to read...')
         return
 
@@ -257,7 +257,7 @@ def ProcessEvents():
     data_to_send = []
 
     # Search cached widgets for register id's to read
-    for widget in DINGUS.request:
+    for widget in Buffer.request:
         index = index + 1
         for reg_name in ['modbus_read_0','modbus_read_1']:
             if reg_name in widget and ok(widget[reg_name]):
@@ -283,16 +283,16 @@ def ProcessEvents():
                             received_data = rh.registers[0]
 
                             should_send = False
-                            if register_id < len(DINGUS.REGISTER_CACHE):
-                                print (' [Debug] Cached at ' + str(register_id) + ' is ' + str(DINGUS.REGISTER_CACHE[register_id]))
-                                should_send = DINGUS.REGISTER_CACHE[register_id] != received_data
+                            if register_id < len(Buffer.REGISTER_CACHE):
+                                print (' [Debug] Cached at ' + str(register_id) + ' is ' + str(Buffer.REGISTER_CACHE[register_id]))
+                                should_send = Buffer.REGISTER_CACHE[register_id] != received_data
                             else:
                                 should_send = True
 
                             if should_send:
                                 data_to_send.append({'data' : received_data, 'index' : index, 'timedate' : datetime.datetime.now().isoformat()})
-                                DINGUS.ensure_cache(register_id)
-                                DINGUS.REGISTER_CACHE[register_id] = received_data
+                                Buffer.ensure_cache(register_id)
+                                Buffer.REGISTER_CACHE[register_id] = received_data
 
                                 sendLog(' [Debug] Modbus succ ' + str(received_data) + ' from ' + str(register_id) + ' reg.')
                             else:

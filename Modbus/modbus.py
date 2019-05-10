@@ -11,7 +11,7 @@ def get_modbus(address):
 		return modbus
 	return None
 
-class TwojStary:
+class RegisterBuffer:
 	REGISTER_CACHE = [0x0]*10
 	client = None
 	request = None
