@@ -526,7 +526,6 @@ def send_widgets_via_modbus():
 	data['widgets'] = temp_array
 
 	body = json.dumps(data)
-
 	publishToQueue(CommandQueue, body)
 
 # Python specific - startup of flask server

@@ -41,7 +41,7 @@ def trySet(data, name, default):
 	return default
 
 def loadConfig():
-	config_path = 'modbus.config'
+	config_path = '/home/pi/Desktop/MichalProject/modbus.config'
 	with open(config_path,'r') as config_file:
 		data = json.loads(config_file.read())
 
